@@ -402,10 +402,19 @@ a{text-decoration:none;color:inherit}
 .p6-ico svg{width:100%;height:100%}
 .p6-photo{
   width:100%;height:130px;border-radius:10px;
-  overflow:hidden;border:1px solid var(--border);
+  border:1px solid var(--border);
+  background:rgba(255,255,255,0.03);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;padding:16px;text-align:center;
 }
-.p6-photo img{
-  width:100%;height:100%;object-fit:cover;display:block;
+.p6-photo .p6-kw{
+  font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:700;letter-spacing:-0.5px;
+  background:linear-gradient(135deg,#C084FC,#F472B6,#60A5FA);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.1;
+}
+.p6-photo .p6-desc{
+  font-size:11px;color:var(--g2);line-height:1.5;letter-spacing:0.2px;
 }
 
 /* ══════════════════════════════════════
@@ -851,7 +860,10 @@ a{text-decoration:none;color:inherit}
       <div class="p6-tag">BRAND</div>
       <div class="p6-ico"><svg viewBox="0 0 48 48" fill="none" stroke="url(#ic1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ic1" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#C084FC"/><stop offset="1" stop-color="#F472B6"/></linearGradient></defs><path d="M24 5L29 19L44 24L29 29L24 43L19 29L4 24L19 19Z"/></svg></div>
       <div class="p6-h">한번 더 대전을 드높일<br>자이 브랜드 가치</div>
-      <div class="p6-photo"><img src="images/1.jpg" alt="자이 브랜드"></div>
+      <div class="p6-photo">
+        <span class="p6-kw">Xi 자이</span>
+        <span class="p6-desc">GS건설 프리미엄 브랜드<br>대한민국 No.1 아파트</span>
+      </div>
     </div>
     <!-- TRAFFIC -->
     <div class="p6-cell">
@@ -859,7 +871,10 @@ a{text-decoration:none;color:inherit}
       <div class="p6-tag">TRAFFIC</div>
       <div class="p6-ico"><svg viewBox="0 0 48 48" fill="none" stroke="url(#ic2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ic2" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#60A5FA"/><stop offset="1" stop-color="#06B6D4"/></linearGradient></defs><rect x="5" y="10" width="38" height="22" rx="8"/><line x1="5" y1="22" x2="43" y2="22"/><rect x="10" y="14" width="9" height="6" rx="1.5"/><rect x="29" y="14" width="9" height="6" rx="1.5"/><circle cx="14" cy="38" r="3"/><circle cx="34" cy="38" r="3"/></svg></div>
       <div class="p6-h">대전도시철도 2호선(예정)<br>역세권</div>
-      <div class="p6-photo"><img src="images/2.jpg" alt="교통"></div>
+      <div class="p6-photo">
+        <span class="p6-kw">트램 2호선</span>
+        <span class="p6-desc">대전 도시철도 예정 역세권<br>광역 교통망 직접 수혜</span>
+      </div>
     </div>
     <!-- SPACE -->
     <div class="p6-cell">
@@ -867,7 +882,10 @@ a{text-decoration:none;color:inherit}
       <div class="p6-tag">SPACE</div>
       <div class="p6-ico"><svg viewBox="0 0 48 48" fill="none" stroke="url(#ic3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ic3" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#F472B6"/><stop offset="1" stop-color="#C084FC"/></linearGradient></defs><rect x="5" y="18" width="14" height="24"/><rect x="22" y="8" width="21" height="34"/><line x1="9" y1="24" x2="15" y2="24"/><line x1="9" y1="30" x2="15" y2="30"/><line x1="9" y1="36" x2="15" y2="36"/><line x1="27" y1="15" x2="38" y2="15"/><line x1="27" y1="22" x2="38" y2="22"/><line x1="27" y1="29" x2="38" y2="29"/><line x1="27" y1="36" x2="38" y2="36"/></svg></div>
       <div class="p6-h">총 2,293세대 대단지와<br>차별화된 명품설계</div>
-      <div class="p6-photo"><img src="images/3.jpg" alt="공간"></div>
+      <div class="p6-photo">
+        <span class="p6-kw">2,293세대</span>
+        <span class="p6-desc">84㎡ · 99㎡ 특화 평형<br>차별화된 명품 설계</span>
+      </div>
     </div>
     <!-- EDU -->
     <div class="p6-cell">
@@ -875,7 +893,10 @@ a{text-decoration:none;color:inherit}
       <div class="p6-tag">EDU</div>
       <div class="p6-ico"><svg viewBox="0 0 48 48" fill="none" stroke="url(#ic4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ic4" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#60A5FA"/></linearGradient></defs><path d="M5 22L24 8L43 22"/><rect x="11" y="22" width="26" height="18"/><rect x="20" y="29" width="8" height="11"/><line x1="24" y1="8" x2="24" y2="2"/><path d="M24 2L36 5.5L24 8Z"/></svg></div>
       <div class="p6-h">초·중·고교 신설(계획)<br>안전한 도보통학</div>
-      <div class="p6-photo"><img src="images/4.jpg" alt="교육"></div>
+      <div class="p6-photo">
+        <span class="p6-kw">초·중·고 신설</span>
+        <span class="p6-desc">단지 내 학교 신설 계획<br>안전한 도보 통학 환경</span>
+      </div>
     </div>
     <!-- ECO -->
     <div class="p6-cell">
@@ -883,7 +904,10 @@ a{text-decoration:none;color:inherit}
       <div class="p6-tag">ECO</div>
       <div class="p6-ico"><svg viewBox="0 0 48 48" fill="none" stroke="url(#ic5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ic5" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#22C55E"/><stop offset="1" stop-color="#06B6D4"/></linearGradient></defs><circle cx="24" cy="14" r="9"/><circle cx="13" cy="23" r="7"/><circle cx="35" cy="23" r="7"/><line x1="24" y1="23" x2="24" y2="42"/><path d="M16 38 Q24 34 32 38"/></svg></div>
       <div class="p6-h">갑천생태호수공원·중앙공원 등<br>편리한 생활인프라</div>
-      <div class="p6-photo"><img src="images/5.jpg" alt="생태환경"></div>
+      <div class="p6-photo">
+        <span class="p6-kw">갑천 생태공원</span>
+        <span class="p6-desc">호수공원 · 중앙공원 인접<br>녹지 생활 인프라 풍부</span>
+      </div>
     </div>
     <!-- VALUE -->
     <div class="p6-cell">
@@ -891,7 +915,10 @@ a{text-decoration:none;color:inherit}
       <div class="p6-tag">VALUE</div>
       <div class="p6-ico"><svg viewBox="0 0 48 48" fill="none" stroke="url(#ic6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ic6" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#F59E0B"/><stop offset="1" stop-color="#F472B6"/></linearGradient></defs><line x1="5" y1="43" x2="43" y2="43"/><rect x="8" y="31" width="7" height="12"/><rect x="21" y="22" width="7" height="21"/><rect x="34" y="10" width="7" height="33"/><path d="M29 8L41 8L41 20"/><path d="M41 8L25 24"/></svg></div>
       <div class="p6-h">서남부스포츠타운·나노반도체<br>국가산단(계획) 등 미래가치</div>
-      <div class="p6-photo"><img src="images/6.jpg" alt="미래가치"></div>
+      <div class="p6-photo">
+        <span class="p6-kw">국가산단 수혜</span>
+        <span class="p6-desc">나노반도체 국가산단(계획)<br>서남부 스포츠타운 미래가치</span>
+      </div>
     </div>
   </div>
 </section>
