@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>도안자이 센텀리체 — 타입·층수 분양가·옵션 계산기 (초안)</title>
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css">
+<style>
+:root{
+  /* 브랜드 골드 — 테마와 무관하게 고정 (양쪽 배경 모두에서 대비 확보) */
+  --gold:#c9a96e;
+  --ink:#171720;
+  --bar-bg:#14141a;
+  --bar-text:#f5f4f0;
+  --bar-text-dim:rgba(245,244,240,.62);
+  --bar-accent:#e3c88f;
+
+  /* 라이트 테마 (기본) */
+  --bg:#f5f4f0;
+  --surface:#ffffff;
+  --surface-2:#faf5ea;
+  --text:#1a1a2e;
+  --text-muted:#5a6478;
+  --text-faint:#8a93a6;
+  --accent:#a9814c;
+  --accent-tint:rgba(169,129,76,.12);
+  --border:rgba(169,129,76,.28);
+  --notice-bg:#fdf6e3;
+  --notice-text:#8a6d2f;
+  --notice-border:rgba(169,129,76,.32);
+  --shadow:0 1px 2px rgba(26,26,46,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111116;--surface:#1b1b22;--surface-2:#241f16;
+    --text:#f2f0ea;--text-muted:#b6b6c2;--text-faint:#82828f;
+    --accent:#e3c88f;--accent-tint:rgba(227,200,143,.16);--border:rgba(227,200,143,.28);
+    --notice-bg:#2a2418;--notice-text:#e3c88f;--notice-border:rgba(227,200,143,.32);
+    --shadow:0 1px 2px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111116;--surface:#1b1b22;--surface-2:#241f16;
+  --text:#f2f0ea;--text-muted:#b6b6c2;--text-faint:#82828f;
+  --accent:#e3c88f;--accent-tint:rgba(227,200,143,.16);--border:rgba(227,200,143,.28);
+  --notice-bg:#2a2418;--notice-text:#e3c88f;--notice-border:rgba(227,200,143,.32);
+  --shadow:0 1px 2px rgba(0,0,0,.5);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  line-height:1.6;padding-bottom:112px;font-variant-numeric:tabular-nums;
+}
+button{font-family:inherit}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none !important}}
+
+.wrap{max-width:640px;margin:0 auto;padding:32px 16px 60px}
+
+.page-head{margin-bottom:20px}
+.page-head h1{font-size:20px;font-weight:800;margin-bottom:8px;text-wrap:balance}
+.notice{background:var(--notice-bg);border:1px solid var(--notice-border);color:var(--notice-text);font-size:12.5px;padding:10px 14px;border-radius:8px;line-height:1.5}
+
+/* STEP ACCORDION */
+.step{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow);transition:opacity .2s}
+.step.disabled{opacity:.45;pointer-events:none}
+
+.step-head{width:100%;display:flex;align-items:center;gap:10px;padding:18px 18px;background:none;border:none;cursor:pointer;text-align:left}
+.step-num{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--accent);background:var(--accent-tint);padding:4px 8px;border-radius:4px;white-space:nowrap}
+.step-title{font-size:15px;font-weight:700;white-space:nowrap}
+.step-value{margin-left:auto;font-size:13px;color:var(--text-muted);font-weight:500;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:4px}
+.chevron{font-size:12px;color:var(--text-faint);transition:transform .3s;flex-shrink:0}
+.step.open .chevron{transform:rotate(180deg)}
+
+.step-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.step.open .step-body{max-height:360px;overflow-y:auto}
+
+/* 단지/타입 등 버튼형 선택 그리드 */
+.option-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;padding:4px 18px 18px}
+.pick-btn{border:1px solid var(--border);background:var(--bg);border-radius:8px;padding:12px 6px;font-size:14px;font-weight:600;color:var(--text);cursor:pointer;transition:.15s}
+.pick-btn:hover{border-color:var(--gold)}
+.pick-btn.active{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+
+/* unit list rows (호수, 옵션 공용) */
+.unit-list{padding:4px 10px 14px;display:flex;flex-direction:column;gap:6px}
+.unit-row{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:.15s}
+.unit-row:hover{border-color:var(--gold)}
+.unit-row.active{background:var(--accent-tint);border-color:var(--gold)}
+.unit-row .u-main{font-size:14px;font-weight:700}
+.unit-row .u-type{font-size:11.5px;color:var(--accent);font-weight:700;background:var(--accent-tint);padding:2px 7px;border-radius:20px;margin-left:2px}
+.unit-row .u-price{margin-left:auto;font-size:13px;font-weight:700;color:var(--text-muted)}
+.unit-row .u-check{width:18px;height:18px;border:1.5px solid var(--border);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--ink);background:var(--surface)}
+.unit-row.active .u-check{background:var(--gold);border-color:var(--gold)}
+.unit-row .u-body{flex:1;min-width:0}
+.unit-row .u-top{display:flex;align-items:center;gap:10px}
+.unit-row .u-top .u-main{flex:1}
+.unit-row .u-top .u-price{flex-shrink:0;margin-left:0}
+.unit-row.has-desc{align-items:flex-start}
+.unit-row .u-desc{margin-top:4px;font-size:11.5px;color:var(--text-faint);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.unit-row.locked{cursor:default}
+.unit-row.locked:hover{border-color:var(--gold)}
+.gift-badge{font-size:11px;font-weight:700;color:var(--ink);background:var(--gold);padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.u-price.value-tag{color:var(--text-faint);font-weight:600;text-decoration:line-through}
+.free-note{padding:2px 18px 14px;font-size:12px;color:var(--text-faint)}
+
+/* price card */
+.price-card{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px;display:none}
+.price-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13.5px;color:var(--text-muted)}
+.price-row strong{color:var(--text);font-size:15px}
+.price-row + .price-row{border-top:1px dashed var(--border)}
+
+/* option category tabs */
+.cat-tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 14px 8px;-webkit-overflow-scrolling:touch}
+.cat-tab{flex-shrink:0;border:1px solid var(--border);background:var(--bg);border-radius:20px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;white-space:nowrap}
+.cat-tab.active{background:var(--text);border-color:var(--text);color:var(--bg)}
+
+.selected-options{padding:10px 18px 16px;border-top:1px solid var(--border)}
+.selected-options .so-title{font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px}
+.chip-list{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:6px 8px 6px 12px;font-size:12.5px;color:var(--text)}
+.chip .chip-price{color:var(--accent);font-weight:700}
+.chip .chip-x{width:16px;height:16px;border-radius:50%;background:var(--text-faint);color:var(--surface);font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.chip-empty{font-size:12.5px;color:var(--text-faint)}
+
+/* summary bar — 테마와 무관하게 고정된 다크 바(브랜드 요소) */
+.summary-bar{position:fixed;left:0;right:0;bottom:0;background:var(--bar-bg);color:var(--bar-text);padding:14px 16px;z-index:300;display:none;box-shadow:0 -6px 24px rgba(0,0,0,.3)}
+.summary-inner{max-width:640px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.summary-text{flex:1;min-width:220px}
+.summary-line{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--bar-text-dim);flex-wrap:wrap;margin-bottom:4px}
+.summary-line b{color:var(--bar-text);font-weight:700}
+.summary-line .op{color:var(--bar-accent)}
+.summary-total{font-size:19px;font-weight:800;color:var(--bar-accent);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.summary-total .raw{font-size:12px;font-weight:500;color:var(--bar-text-dim)}
+.btn-generate{flex-shrink:0;background:var(--bar-accent);color:var(--ink);border:none;padding:13px 20px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:.02em;white-space:nowrap}
+.btn-generate:hover{filter:brightness(1.08)}
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1>타입·층수 분양가 · 옵션 계산기 (초안)</h1>
+    <div class="notice">
+      ※ 아래 단지·타입·층수구간·분양가·옵션 데이터는 <b>구조 확인용 샘플</b>입니다. 실제 자료(엑셀)를 주시면 그대로 교체해서 반영합니다.
+    </div>
+  </div>
+
+  <!-- STEP 1 : 단지 -->
+  <section class="step" id="step1">
+    <button class="step-head" type="button" data-toggle="step1">
+      <span class="step-num">STEP 1</span>
+      <span class="step-title">단지 선택</span>
+      <span class="step-value" id="danjiValue">선택해주세요</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="step-body">
+      <div class="option-grid" id="danjiList"></div>
+    </div>
+  </section>
+
+  <!-- STEP 2 : 타입 -->
+  <section class="step disabled" id="stepType">
+    <button class="step-head" type="button" data-toggle="stepType">
+      <span class="step-num">STEP 2</span>
+      <span class="step-title">타입 선택</span>
+      <span class="step-value" id="typeValue">단지를 먼저 선택해주세요</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="step-body">
+      <div class="option-grid" id="typeList"></div>
+    </div>
+  </section>
+
+  <!-- STEP 3 : 층수구간 -->
+  <section class="step disabled" id="stepFloor">
+    <button class="step-head" type="button" data-toggle="stepFloor">
+      <span class="step-num">STEP 3</span>
+      <span class="step-title">층수 선택</span>
+      <span class="step-value" id="floorValue">타입을 먼저 선택해주세요</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="step-body">
+      <div class="unit-list" id="floorList"></div>
+    </div>
+  </section>
+
+  <!-- 분양가 카드 -->
+  <div class="price-card" id="priceCard">
+    <div class="price-row"><span>선택 정보</span><strong id="unitLabel">-</strong></div>
+    <div class="price-row"><span>분양가</span><strong id="basePriceText">0원</strong></div>
+  </div>
+
+  <!-- STEP 4 : 확장비용 -->
+  <section class="step disabled" id="stepExpand">
+    <button class="step-head" type="button" data-toggle="stepExpand">
+      <span class="step-num">STEP 4</span>
+      <span class="step-title">확장비용 선택</span>
+      <span class="step-value" id="expandValue">층수를 먼저 선택해주세요</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="step-body">
+      <div class="unit-list" id="expandList"></div>
+      <div class="free-note">※ 확장비용을 선택하셔야 아래 무상 제공 옵션이 적용됩니다.</div>
+    </div>
+  </section>
+
+  <!-- STEP 5 : 무상 제공 옵션 -->
+  <section class="step disabled" id="stepFree">
+    <button class="step-head" type="button" data-toggle="stepFree">
+      <span class="step-num">STEP 5</span>
+      <span class="step-title">무상 제공 옵션</span>
+      <span class="step-value" id="freeValue">확장비용을 먼저 선택해주세요</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="step-body">
+      <div class="unit-list" id="freeList"></div>
+      <div class="free-note">※ 무상 제공 항목은 기본 포함되어 있으며, 총 합계 금액에는 별도로 더해지지 않습니다.</div>
+    </div>
+  </section>
+
+  <!-- STEP 6 : 유상 옵션 -->
+  <section class="step disabled" id="stepOpt">
+    <button class="step-head" type="button" data-toggle="stepOpt">
+      <span class="step-num">STEP 6</span>
+      <span class="step-title">옵션 선택</span>
+      <span class="step-value" id="optValue">0개 선택</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="step-body">
+      <div class="cat-tabs" id="catTabs"></div>
+      <div class="unit-list" id="optList"></div>
+      <div class="selected-options">
+        <div class="so-title">선택한 옵션</div>
+        <div class="chip-list" id="chipList"><span class="chip-empty">선택된 옵션이 없습니다</span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="summary-bar" id="summaryBar">
+  <div class="summary-inner">
+    <div class="summary-text">
+      <div class="summary-line">
+        <span>분양가 <b id="sumBase">0원</b></span>
+        <span class="op">+</span>
+        <span>확장비 <b id="sumExpand">미선택</b></span>
+        <span class="op">+</span>
+        <span>옵션가 <b id="sumOpt">0원</b></span>
+        <span class="op">=</span>
+      </div>
+      <div class="summary-total">
+        총 <span id="sumTotalEok">0원</span>
+        <span class="raw" id="sumTotalRaw">(0원)</span>
+      </div>
+    </div>
+    <button type="button" class="btn-generate" id="generateBtn">📄 견적서 만들기</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   REAL DATA — 도안자이_분양가_옵션_전체양식.xlsx 로부터 생성
+   ============================================================ */
+
+// 단지별 공급 타입 (실제 데이터: 도안자이_분양가_옵션_전체양식.xlsx 시트1 기준)
+const DANJI_TYPES = {
+  "1단지": ["84A","84B","84C","84D","84E","99A","99B"],
+  "2단지": ["84A","84A1","84B","84B1","84C","84C1","115A","115B","115C","115C1","134"]
+};
+
+// 단지·타입별 · 층수구간별 분양가 (실제 데이터) — 단지가 달라도 타입코드가 겹칠 수 있어 단지로 먼저 구분
+const FLOOR_BANDS = {
+  "1단지": {
+    "84A": [
+      { "label": "2층", "price": 723200000 },
+      { "label": "3층", "price": 726200000 },
+      { "label": "4층", "price": 736200000 },
+      { "label": "5~9층", "price": 749200000 },
+      { "label": "10~19층", "price": 764200000 },
+      { "label": "20~29층", "price": 773200000 },
+      { "label": "30층이상", "price": 776200000 }
+    ],
+    "84B": [
+      { "label": "2층", "price": 723200000 },
+      { "label": "3층", "price": 726200000 },
+      { "label": "4층", "price": 736200000 },
+      { "label": "5~9층", "price": 749200000 },
+      { "label": "10~19층", "price": 764200000 },
+      { "label": "20~29층", "price": 773200000 },
+      { "label": "30층이상", "price": 776200000 }
+    ],
+    "84D": [
+      { "label": "3층", "price": 726200000 },
+      { "label": "5~9층", "price": 749200000 },
+      { "label": "10~19층", "price": 764200000 }
+    ],
+    "84E": [
+      { "label": "4층", "price": 736200000 },
+      { "label": "5~9층", "price": 749200000 },
+      { "label": "10~19층", "price": 764200000 }
+    ],
+    "84C": [
+      { "label": "2층", "price": 717200000 },
+      { "label": "3층", "price": 720200000 },
+      { "label": "4층", "price": 728200000 },
+      { "label": "5~9층", "price": 743200000 },
+      { "label": "10~19층", "price": 757200000 },
+      { "label": "20~29층", "price": 766200000 },
+      { "label": "30층이상", "price": 769200000 }
+    ],
+    "99A": [
+      { "label": "2층", "price": 896200000 },
+      { "label": "3층", "price": 899200000 },
+      { "label": "4층", "price": 936200000 },
+      { "label": "5~9층", "price": 967200000 },
+      { "label": "10~19층", "price": 979200000 },
+      { "label": "20~29층", "price": 989200000 },
+      { "label": "30층이상", "price": 999200000 }
+    ],
+    "99B": [
+      { "label": "3층", "price": 899200000 },
+      { "label": "5~9층", "price": 967200000 },
+      { "label": "10~19층", "price": 979200000 }
+    ]
+  },
+  "2단지": {
+    "84A": [
+      { "label": "2층", "price": 721900000 },
+      { "label": "3층", "price": 724900000 },
+      { "label": "4층", "price": 734900000 },
+      { "label": "5~9층", "price": 747900000 },
+      { "label": "10~19층", "price": 762900000 },
+      { "label": "20~29층", "price": 771900000 },
+      { "label": "30층이상", "price": 774900000 }
+    ],
+    "84A1": [
+      { "label": "2층", "price": 720900000 },
+      { "label": "3층", "price": 723900000 },
+      { "label": "4층", "price": 733900000 },
+      { "label": "5~9층", "price": 746900000 },
+      { "label": "10~19층", "price": 761900000 }
+    ],
+    "84B": [
+      { "label": "2층", "price": 719900000 },
+      { "label": "3층", "price": 722900000 },
+      { "label": "4층", "price": 732900000 },
+      { "label": "5~9층", "price": 745900000 },
+      { "label": "10~19층", "price": 760900000 },
+      { "label": "20~29층", "price": 769900000 },
+      { "label": "30층이상", "price": 772900000 }
+    ],
+    "84B1": [
+      { "label": "2층", "price": 718900000 },
+      { "label": "4층", "price": 731900000 },
+      { "label": "5~9층", "price": 744900000 },
+      { "label": "10~19층", "price": 759900000 },
+      { "label": "20~29층", "price": 768900000 }
+    ],
+    "84C": [
+      { "label": "2층", "price": 723900000 },
+      { "label": "3층", "price": 726900000 },
+      { "label": "4층", "price": 736900000 },
+      { "label": "5~9층", "price": 749900000 },
+      { "label": "10~19층", "price": 764900000 },
+      { "label": "20~29층", "price": 773900000 },
+      { "label": "30층이상", "price": 776900000 }
+    ],
+    "84C1": [
+      { "label": "2층", "price": 722900000 },
+      { "label": "4층", "price": 735900000 },
+      { "label": "5~9층", "price": 748900000 },
+      { "label": "10~19층", "price": 763900000 },
+      { "label": "20~29층", "price": 772900000 }
+    ],
+    "115A": [
+      { "label": "4층", "price": 1006900000 },
+      { "label": "5~9층", "price": 1036900000 },
+      { "label": "10~19층", "price": 1048900000 },
+      { "label": "20~29층", "price": 1058900000 }
+    ],
+    "115B": [
+      { "label": "2층", "price": 959900000 },
+      { "label": "3층", "price": 962900000 },
+      { "label": "5~9층", "price": 1036900000 },
+      { "label": "10~19층", "price": 1048900000 },
+      { "label": "20~29층", "price": 1058900000 },
+      { "label": "30층이상", "price": 1069900000 }
+    ],
+    "115C": [
+      { "label": "2층", "price": 959900000 },
+      { "label": "3층", "price": 962900000 },
+      { "label": "4층", "price": 1006900000 },
+      { "label": "5~9층", "price": 1036900000 },
+      { "label": "10~19층", "price": 1048900000 },
+      { "label": "20~29층", "price": 1058900000 },
+      { "label": "30층이상", "price": 1069900000 }
+    ],
+    "115C1": [
+      { "label": "2층", "price": 959900000 },
+      { "label": "3층", "price": 962900000 },
+      { "label": "4층", "price": 1006900000 },
+      { "label": "5~9층", "price": 1036900000 },
+      { "label": "10~19층", "price": 1048900000 },
+      { "label": "20~29층", "price": 1058900000 }
+    ],
+    "134": [
+      { "label": "30층이상", "price": 2169900000 }
+    ]
+  }
+};
+
+// 확장비용 (실제 데이터) — 단지·타입별 금액. 2단지 콤마 타입은 동일가로 각 타입에 매핑
+const EXPANSION_OPTIONS_BY_DANJI_TYPE = {
+  "1단지": {
+    "84A": [{ "id": "exp_1단지_84A", "name": "전체 확장", "price": 19400000 }],
+    "84B": [{ "id": "exp_1단지_84B", "name": "전체 확장", "price": 23400000 }],
+    "84C": [{ "id": "exp_1단지_84C", "name": "전체 확장", "price": 18700000 }],
+    "84D": [{ "id": "exp_1단지_84D", "name": "전체 확장", "price": 21400000 }],
+    "84E": [{ "id": "exp_1단지_84E", "name": "전체 확장", "price": 19900000 }],
+    "99A": [{ "id": "exp_1단지_99A", "name": "전체 확장", "price": 24400000 }],
+    "99B": [{ "id": "exp_1단지_99B", "name": "전체 확장", "price": 26400000 }]
+  },
+  "2단지": {
+    "84A": [{ "id": "exp_2단지_84A", "name": "전체 확장", "price": 19700000 }],
+    "84A1": [{ "id": "exp_2단지_84A1", "name": "전체 확장", "price": 19700000 }],
+    "84B": [{ "id": "exp_2단지_84B", "name": "전체 확장", "price": 20900000 }],
+    "84B1": [{ "id": "exp_2단지_84B1", "name": "전체 확장", "price": 20900000 }],
+    "84C": [{ "id": "exp_2단지_84C", "name": "전체 확장", "price": 22900000 }],
+    "84C1": [{ "id": "exp_2단지_84C1", "name": "전체 확장", "price": 22900000 }],
+    "115A": [{ "id": "exp_2단지_115A", "name": "전체 확장", "price": 27900000 }],
+    "115B": [{ "id": "exp_2단지_115B", "name": "전체 확장", "price": 26900000 }],
+    "115C": [{ "id": "exp_2단지_115C", "name": "전체 확장", "price": 28900000 }],
+    "115C1": [{ "id": "exp_2단지_115C1", "name": "전체 확장", "price": 28900000 }],
+    "134": [{ "id": "exp_2단지_134", "name": "전체 확장", "price": 39900000 }]
+  }
+};
+
+// 무상 제공 옵션 (실제 데이터)
+const FREE_OPTIONS = [
+  { "id": "free1", "name": "현광중문(3연동 자동 리니어)", "price": 2560000 },
+  { "id": "free2", "name": "벽면시트패널", "price": 1000000 },
+  { "id": "free3", "name": "이탈라아산 포셀린타일", "price": 4670000 }
+];
+
+// 유상 옵션 (실제 데이터) — types:null=전체 타입 공통, count=대수, note=짧으면 이름 뒤 표기/길면 설명으로 표시
+// (참고) 이 시트는 '타입'만 있고 '단지' 구분이 없어 같은 타입코드(84A 등)면 단지 무관 동일 적용됩니다
+const OPTION_CATEGORIES = [
+  { "key": "kitchen", "label": "주방", "items": [
+    { "id": "opt1", "name": "Style up", "price": 33492000, "types": ["84A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "opt2", "name": "Style up", "price": 32686000, "types": ["84B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "opt3", "name": "Style up", "price": 32270000, "types": ["84C"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "opt4", "name": "Style up", "price": 33582000, "types": ["84D"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "opt5", "name": "Style up", "price": 34387000, "types": ["84E"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "opt6", "name": "Style up", "price": 40444000, "types": ["99A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "opt7", "name": "Style up", "price": 40898000, "types": ["99B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "opt8", "name": "쿡탑(디오스 전기 인덕션)", "price": 1253000, "types": null, "count": null, "note": "LG전자 BEI3ASB4BI" }
+  ]},
+  { "key": "lighting", "label": "조명 및 실링팬", "items": [
+    { "id": "opt9", "name": "Style up", "price": 8823000, "types": ["84A"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "opt10", "name": "Style up", "price": 9030000, "types": ["84B"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "opt11", "name": "Style up", "price": 10374000, "types": ["84C"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "opt12", "name": "Style up", "price": 8798000, "types": ["84D"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "opt13", "name": "Style up", "price": 8798000, "types": ["84E"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "opt14", "name": "Style up", "price": 9285000, "types": ["99A"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "opt15", "name": "Style up", "price": 9300000, "types": ["99B"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" }
+  ]},
+  { "key": "individual", "label": "개별", "items": [
+    { "id": "opt16", "name": "욕실 고급수전/도기", "price": 2365000, "types": null, "count": null, "note": "①세면기, ②세면기 수전, ③샤워수전, ④비데일체형양변기(가족욕실), ⑤욕실 액세서리 및 샤워부스" },
+    { "id": "opt17", "name": "침실3 붙박이장", "price": 1339000, "types": null, "count": null, "note": null }
+  ]},
+  { "key": "bath", "label": "욕실", "items": [
+    { "id": "opt18", "name": "복합 환풍기", "price": 1344000, "types": null, "count": null, "note": "힘펠 FHD3-C150P_LUMI" }
+  ]},
+  { "key": "ac", "label": "시스템에어컨", "items": [
+    { "id": "opt19", "name": "거실, 침실1", "price": 4340000, "types": ["84A"], "count": 2, "note": "기본" },
+    { "id": "opt20", "name": "거실, 침실1", "price": 4340000, "types": ["84B"], "count": 2, "note": "기본" },
+    { "id": "opt21", "name": "거실, 침실1", "price": 4340000, "types": ["84D"], "count": 2, "note": "기본" },
+    { "id": "opt22", "name": "거실, 침실1", "price": 4340000, "types": ["84E"], "count": 2, "note": "기본" },
+    { "id": "opt23", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84A"], "count": 4, "note": "기본" },
+    { "id": "opt24", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84B"], "count": 4, "note": "기본" },
+    { "id": "opt25", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84D"], "count": 4, "note": "기본" },
+    { "id": "opt26", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84E"], "count": 4, "note": "기본" },
+    { "id": "opt27", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84A"], "count": 5, "note": "기본" },
+    { "id": "opt28", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84B"], "count": 5, "note": "기본" },
+    { "id": "opt29", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84D"], "count": 5, "note": "기본" },
+    { "id": "opt30", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84E"], "count": 5, "note": "기본" },
+    { "id": "opt31", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84A"], "count": 3, "note": "주방 Style up" },
+    { "id": "opt32", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84B"], "count": 3, "note": "주방 Style up" },
+    { "id": "opt33", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84D"], "count": 3, "note": "주방 Style up" },
+    { "id": "opt34", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84E"], "count": 3, "note": "주방 Style up" },
+    { "id": "opt35", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84A"], "count": 5, "note": "주방 Style up" },
+    { "id": "opt36", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84B"], "count": 5, "note": "주방 Style up" },
+    { "id": "opt37", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84D"], "count": 5, "note": "주방 Style up" },
+    { "id": "opt38", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84E"], "count": 5, "note": "주방 Style up" },
+    { "id": "opt39", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84A"], "count": 3, "note": "주방 냉방강화" },
+    { "id": "opt40", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84B"], "count": 3, "note": "주방 냉방강화" },
+    { "id": "opt41", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84D"], "count": 3, "note": "주방 냉방강화" },
+    { "id": "opt42", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84E"], "count": 3, "note": "주방 냉방강화" },
+    { "id": "opt43", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84A"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "opt44", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84B"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "opt45", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84D"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "opt46", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84E"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "opt47", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84A"], "count": 6, "note": "주방 냉방강화" },
+    { "id": "opt48", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84B"], "count": 6, "note": "주방 냉방강화" },
+    { "id": "opt49", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84D"], "count": 6, "note": "주방 냉방강화" },
+    { "id": "opt50", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84E"], "count": 6, "note": "주방 냉방강화" },
+    { "id": "opt51", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84C"], "count": 3, "note": "기본" },
+    { "id": "opt52", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84C"], "count": 5, "note": "기본" },
+    { "id": "opt53", "name": "거실, 주방, 침실1", "price": 6470000, "types": ["99A"], "count": 3, "note": "주방 Style up" },
+    { "id": "opt54", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9660000, "types": ["99A"], "count": 5, "note": "주방 Style up" },
+    { "id": "opt55", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11120000, "types": ["99A"], "count": 6, "note": null },
+    { "id": "opt56", "name": "거실, 주방, 침실1", "price": 6470000, "types": ["99B"], "count": 3, "note": "주방 Style up" },
+    { "id": "opt57", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9660000, "types": ["99B"], "count": 5, "note": "주방 Style up" },
+    { "id": "opt58", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 1112000, "types": ["99B"], "count": 6, "note": null }
+  ]},
+  { "key": "vent", "label": "환기형 공기청정시스템", "items": [
+    { "id": "opt59", "name": "거실, 주방", "price": 2150000, "types": null, "count": 2, "note": null },
+    { "id": "opt60", "name": "거실, 침실1", "price": 2150000, "types": null, "count": 2, "note": null },
+    { "id": "opt61", "name": "거실, 주방, 침실1", "price": 3200000, "types": null, "count": 3, "note": null },
+    { "id": "opt62", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 5300000, "types": null, "count": 5, "note": null }
+  ]}
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const state = {
+  danji: null,
+  type: null,
+  band: null, // { label, price }
+  expansion: null,
+  currentCat: OPTION_CATEGORIES[0].key,
+  selectedOptions: new Map(), // key: cat::id -> {name, price}
+};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function fmtWon(n){ return n.toLocaleString('ko-KR') + '원'; }
+function fmtEok(n){
+  const eok = Math.floor(n / 100000000);
+  const man = Math.round((n % 100000000) / 10000);
+  let str = '';
+  if(eok > 0) str += eok + '억 ';
+  if(man > 0) str += man.toLocaleString('ko-KR') + '만';
+  if(!str) str = '0';
+  return str.trim() + '원';
+}
+function el(id){ return document.getElementById(id); }
+
+/* ============================================================
+   STEP TOGGLE (아코디언)
+   ============================================================ */
+document.querySelectorAll('[data-toggle]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const step = el(btn.dataset.toggle);
+    if(step.classList.contains('disabled')) return;
+    step.classList.toggle('open');
+  });
+});
+
+/* ============================================================
+   STEP 1 : 단지 선택
+   ============================================================ */
+function renderDanjiList(){
+  const wrap = el('danjiList');
+  wrap.innerHTML = '';
+  Object.keys(DANJI_TYPES).forEach(danji=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pick-btn' + (state.danji === danji ? ' active' : '');
+    btn.textContent = danji;
+    btn.addEventListener('click', ()=> selectDanji(danji));
+    wrap.appendChild(btn);
+  });
+}
+
+function selectDanji(danji){
+  state.danji = danji;
+  state.type = null;
+  state.band = null;
+  state.expansion = null;
+  state.selectedOptions.clear();
+  el('danjiValue').textContent = danji;
+  el('typeValue').textContent = '선택해주세요';
+  el('floorValue').textContent = '타입을 먼저 선택해주세요';
+  el('expandValue').textContent = '층수를 먼저 선택해주세요';
+  el('freeValue').textContent = '확장비용을 먼저 선택해주세요';
+  renderDanjiList();
+
+  el('step1').classList.remove('open');
+  el('stepType').classList.remove('disabled');
+  el('stepType').classList.add('open');
+  el('stepFloor').classList.add('disabled');
+  el('stepFloor').classList.remove('open');
+  el('stepExpand').classList.add('disabled');
+  el('stepExpand').classList.remove('open');
+  el('stepFree').classList.add('disabled');
+  el('stepFree').classList.remove('open');
+  el('stepOpt').classList.add('disabled');
+  el('stepOpt').classList.remove('open');
+  el('priceCard').style.display = 'none';
+
+  renderTypeList();
+  renderChips();
+  updateSummary();
+}
+
+/* ============================================================
+   STEP 2 : 타입 선택
+   ============================================================ */
+function renderTypeList(){
+  const wrap = el('typeList');
+  wrap.innerHTML = '';
+  if(!state.danji) return;
+  DANJI_TYPES[state.danji].forEach(type=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pick-btn' + (state.type === type ? ' active' : '');
+    btn.textContent = type;
+    btn.addEventListener('click', ()=> selectType(type));
+    wrap.appendChild(btn);
+  });
+}
+
+function selectType(type){
+  state.type = type;
+  state.band = null;
+  state.expansion = null;
+  state.selectedOptions.clear();
+  el('typeValue').textContent = type;
+  el('floorValue').textContent = '선택해주세요';
+  el('expandValue').textContent = '층수를 먼저 선택해주세요';
+  el('freeValue').textContent = '확장비용을 먼저 선택해주세요';
+  renderTypeList();
+
+  el('stepType').classList.remove('open');
+  el('stepFloor').classList.remove('disabled');
+  el('stepFloor').classList.add('open');
+  el('stepExpand').classList.add('disabled');
+  el('stepExpand').classList.remove('open');
+  el('stepFree').classList.add('disabled');
+  el('stepFree').classList.remove('open');
+  el('stepOpt').classList.add('disabled');
+  el('stepOpt').classList.remove('open');
+  el('priceCard').style.display = 'none';
+
+  renderFloorList();
+  renderOptList();
+  renderChips();
+  updateSummary();
+}
+
+/* ============================================================
+   STEP 3 : 층수 선택 → 분양가 확정
+   ============================================================ */
+function renderFloorList(){
+  const wrap = el('floorList');
+  wrap.innerHTML = '';
+  if(!state.type) return;
+  ((FLOOR_BANDS[state.danji] && FLOOR_BANDS[state.danji][state.type]) || []).forEach(band=>{
+    const row = document.createElement('div');
+    row.className = 'unit-row' + (state.band && state.band.label === band.label ? ' active' : '');
+    row.innerHTML = `
+      <span class="u-check">✓</span>
+      <span class="u-main">${band.label}</span>
+      <span class="u-price">${fmtEok(band.price)}</span>
+    `;
+    row.addEventListener('click', ()=> selectBand(band));
+    wrap.appendChild(row);
+  });
+}
+
+function selectBand(band){
+  state.band = band;
+  state.expansion = null;
+  el('floorValue').textContent = band.label + ' (' + fmtEok(band.price) + ')';
+  renderFloorList();
+
+  el('stepFloor').classList.remove('open');
+  el('stepExpand').classList.remove('disabled');
+  el('stepExpand').classList.add('open');
+  el('stepFree').classList.add('disabled');
+  el('stepFree').classList.remove('open');
+  el('stepOpt').classList.add('disabled');
+  el('stepOpt').classList.remove('open');
+  el('expandValue').textContent = '선택해주세요';
+  el('freeValue').textContent = '확장비용을 먼저 선택해주세요';
+
+  el('priceCard').style.display = 'block';
+  el('unitLabel').textContent = state.danji + ' · ' + state.type + ' · ' + band.label;
+  el('basePriceText').textContent = fmtEok(band.price) + '  (' + fmtWon(band.price) + ')';
+
+  renderExpandList();
+  updateSummary();
+}
+
+/* ============================================================
+   STEP 4 : 확장비용 선택 (단일 선택 · 합계에 포함됨)
+   ============================================================ */
+function renderExpandList(){
+  const wrap = el('expandList');
+  wrap.innerHTML = '';
+  if(!state.type) return;
+  ((EXPANSION_OPTIONS_BY_DANJI_TYPE[state.danji] && EXPANSION_OPTIONS_BY_DANJI_TYPE[state.danji][state.type]) || []).forEach(item=>{
+    const active = state.expansion && state.expansion.id === item.id;
+    const row = document.createElement('div');
+    row.className = 'unit-row' + (active ? ' active' : '');
+    row.innerHTML = `
+      <span class="u-check">✓</span>
+      <span class="u-main">${item.name}</span>
+      <span class="u-price">${item.price > 0 ? '+' + fmtWon(item.price) : '0원'}</span>
+    `;
+    row.addEventListener('click', ()=> selectExpansion(item));
+    wrap.appendChild(row);
+  });
+}
+
+function selectExpansion(item){
+  state.expansion = item;
+  el('expandValue').textContent = item.name + ' (' + (item.price > 0 ? '+' + fmtWon(item.price) : '0원') + ')';
+  renderExpandList();
+
+  el('stepExpand').classList.remove('open');
+  el('stepFree').classList.remove('disabled');
+  el('stepFree').classList.add('open');
+  el('stepOpt').classList.remove('disabled');
+  el('stepOpt').classList.add('open');
+
+  renderFreeList();
+  updateSummary();
+}
+
+/* ============================================================
+   STEP 5 : 무상 제공 옵션 (항상 체크 · 합계 미반영)
+   ============================================================ */
+function freeTotal(){
+  return FREE_OPTIONS.reduce((sum, item) => sum + item.price, 0);
+}
+
+function renderFreeList(){
+  const wrap = el('freeList');
+  wrap.innerHTML = '';
+  FREE_OPTIONS.forEach(item=>{
+    const row = document.createElement('div');
+    row.className = 'unit-row active locked';
+    row.innerHTML = `
+      <span class="u-check">✓</span>
+      <span class="u-main">${item.name}</span>
+      <span class="gift-badge">무상 제공</span>
+      <span class="u-price value-tag">${fmtWon(item.price)} 상당</span>
+    `;
+    wrap.appendChild(row);
+  });
+  el('freeValue').textContent = FREE_OPTIONS.length + '개 항목 · ' + fmtWon(freeTotal()) + ' 상당';
+}
+
+/* ============================================================
+   STEP 6 : 유상 옵션 선택
+   ============================================================ */
+function renderOptTabs(){
+  const wrap = el('catTabs');
+  wrap.innerHTML = '';
+  OPTION_CATEGORIES.forEach(cat=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cat-tab' + (state.currentCat === cat.key ? ' active' : '');
+    btn.textContent = cat.label;
+    btn.addEventListener('click', ()=>{
+      state.currentCat = cat.key;
+      renderOptTabs();
+      renderOptList();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+// item.types: null(전체 타입 공통) | ['84A', ...](해당 타입에서만 표시)
+// item.count: 대수(있으면 이름 뒤에 "(N대 · note)"로 표기, note가 '기본'이면 생략)
+// item.count가 없을 때 item.note는 짧은 스펙 설명으로 보고, 목록엔 요약만 · 견적서엔 전체 표시
+function resolveItem(item){
+  if(item.types && item.types.indexOf(state.type) === -1) return null;
+  let name = item.name;
+  let desc = null;
+  if(item.count){
+    const suffix = item.note && item.note !== '기본' ? ' · ' + item.note : '';
+    name = name + ' (' + item.count + '대' + suffix + ')';
+  } else if(item.note){
+    desc = item.note;
+  }
+  return { name, price: item.price, desc };
+}
+
+function renderOptList(){
+  const wrap = el('optList');
+  wrap.innerHTML = '';
+  const cat = OPTION_CATEGORIES.find(c=> c.key === state.currentCat);
+  if(!cat) return;
+  cat.items.forEach(item=>{
+    const resolved = resolveItem(item);
+    if(!resolved) return;
+    const key = cat.key + '::' + item.id;
+    const active = state.selectedOptions.has(key);
+    const row = document.createElement('div');
+    row.className = 'unit-row' + (active ? ' active' : '') + (resolved.desc ? ' has-desc' : '');
+    row.innerHTML = `
+      <span class="u-check">✓</span>
+      <div class="u-body">
+        <div class="u-top">
+          <span class="u-main">${resolved.name}</span>
+          <span class="u-price">+${fmtWon(resolved.price)}</span>
+        </div>
+        ${resolved.desc ? `<div class="u-desc">${resolved.desc.replace(/\n/g,' ')}</div>` : ''}
+      </div>
+    `;
+    row.addEventListener('click', ()=> toggleOption(cat, item, resolved));
+    wrap.appendChild(row);
+  });
+}
+
+function toggleOption(cat, item, resolved){
+  const key = cat.key + '::' + item.id;
+  if(state.selectedOptions.has(key)){
+    state.selectedOptions.delete(key);
+  } else {
+    state.selectedOptions.set(key, { id:item.id, name:resolved.name, price:resolved.price, desc:resolved.desc, catLabel:cat.label });
+  }
+  renderOptList();
+  renderChips();
+  updateSummary();
+}
+
+function renderChips(){
+  const wrap = el('chipList');
+  wrap.innerHTML = '';
+  if(state.selectedOptions.size === 0){
+    wrap.innerHTML = '<span class="chip-empty">선택된 옵션이 없습니다</span>';
+    return;
+  }
+  state.selectedOptions.forEach((opt, key)=>{
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.innerHTML = `${opt.name} <span class="chip-price">+${fmtWon(opt.price)}</span>`;
+    const x = document.createElement('span');
+    x.className = 'chip-x';
+    x.textContent = '✕';
+    x.addEventListener('click', ()=>{
+      state.selectedOptions.delete(key);
+      renderOptList();
+      renderChips();
+      updateSummary();
+    });
+    chip.appendChild(x);
+    wrap.appendChild(chip);
+  });
+}
+
+/* ============================================================
+   합계 계산
+   ============================================================ */
+function updateSummary(){
+  const basePrice = state.band ? state.band.price : 0;
+  const expansionPrice = state.expansion ? state.expansion.price : 0;
+  let optTotal = 0;
+  state.selectedOptions.forEach(o=> optTotal += o.price);
+  const total = basePrice + expansionPrice + optTotal;
+
+  el('optValue').textContent = state.selectedOptions.size + '개 선택 · ' + fmtWon(optTotal);
+
+  const bar = el('summaryBar');
+  if(basePrice > 0){
+    bar.style.display = 'block';
+    el('sumBase').textContent = fmtWon(basePrice);
+    el('sumExpand').textContent = state.expansion ? fmtWon(expansionPrice) : '미선택';
+    el('sumOpt').textContent = fmtWon(optTotal);
+    el('sumTotalEok').textContent = fmtEok(total);
+    el('sumTotalRaw').textContent = '(' + fmtWon(total) + ')';
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+/* ============================================================
+   견적서 페이지 생성 (STEP 1~6 선택 결과 → 새 탭)
+   사진은 타입 이미지만 사용합니다. 아래 파일을 images/types/ 폴더에
+   넣어주시면 자동으로 표시됩니다 (없으면 "이미지 준비중" 표시).
+     - 타입 사진 : images/types/{단지슬러그}_{타입}.jpg   예) images/types/1danji_84A.jpg
+     (1단지·2단지에 84A/84B/84C처럼 같은 타입명이 겹쳐서 단지 구분자를 파일명 앞에 붙입니다)
+   무상/유상 옵션은 이미지 없이 이름·가격 텍스트로만 표시됩니다.
+   ============================================================ */
+const DANJI_SLUG = { '1단지': '1danji', '2단지': '2danji' };
+function typeImagePath(danji, type){ return 'images/types/' + (DANJI_SLUG[danji] || danji) + '_' + type + '.jpg'; }
+
+function optionRow(tag, title, priceText, priceClass, desc){
+  return `
+    <div class="opt-row">
+      <div class="opt-row-top">
+        <span class="tag">${tag}</span>
+        <span class="name">${title}</span>
+        <span class="price${priceClass ? ' ' + priceClass : ''}">${priceText}</span>
+      </div>
+      ${desc ? `<div class="opt-row-desc">${desc.replace(/\n/g,'<br>')}</div>` : ''}
+    </div>`;
+}
+
+function openEstimate(){
+  if(!state.band){
+    alert('타입/층수를 먼저 선택해주세요.');
+    return;
+  }
+
+  const basePrice = state.band.price;
+  const expansionPrice = state.expansion ? state.expansion.price : 0;
+  const paidItems = Array.from(state.selectedOptions.values());
+  let optTotal = 0;
+  paidItems.forEach(o => optTotal += o.price);
+  const total = basePrice + expansionPrice + optTotal;
+
+  const freeRows = FREE_OPTIONS.map(item =>
+    optionRow('무상 제공', item.name, fmtWon(item.price) + ' 상당', 'strike')
+  ).join('');
+
+  const paidRows = paidItems.length
+    ? paidItems.map(item => optionRow(item.catLabel, item.name, '+' + fmtWon(item.price), null, item.desc)).join('')
+    : '<p class="empty-note">선택한 유상 옵션이 없습니다.</p>';
+
+  const expansionLine = state.expansion
+    ? state.expansion.name + (state.expansion.price > 0 ? ' (+' + fmtWon(state.expansion.price) + ')' : ' (0원)')
+    : '미선택';
+
+  const now = new Date();
+  const dateStr = now.getFullYear() + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + String(now.getDate()).padStart(2,'0')
+    + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+
+  const html = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>도안자이 센텀리체 견적서 — ${state.type} ${state.band.label}</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css">
+<style>
+:root{--gold:#c9a96e;--ink:#1a1a2e;--muted:#5a6478;--faint:#8a93a6;--border:#e7e1d4;--surface2:#faf5ea;--bg:#f5f4f0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Pretendard',-apple-system,'Apple SD Gothic Neo',sans-serif;line-height:1.6;font-variant-numeric:tabular-nums}
+.sheet{max-width:720px;margin:0 auto;padding:40px 24px 60px}
+.sheet-header{text-align:center;margin-bottom:28px}
+.brand{font-size:13px;font-weight:700;letter-spacing:.15em;color:var(--gold);text-transform:uppercase}
+.doc-title{font-size:24px;font-weight:800;margin:8px 0 6px}
+.doc-meta{font-size:12px;color:var(--faint)}
+
+.unit-block{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:24px}
+.unit-info{display:flex;flex-wrap:wrap;gap:10px 24px;margin-bottom:18px}
+.unit-info-row{display:flex;align-items:baseline;gap:8px;font-size:14px;color:var(--muted)}
+.unit-info-row strong{color:var(--ink);font-size:16px}
+.unit-image{width:100%;min-height:200px;border-radius:10px;overflow:hidden;position:relative;background:var(--surface2);display:flex;justify-content:center}
+.unit-image img{max-width:100%;height:auto;max-height:640px;display:block;object-fit:contain}
+.unit-image .e-ph{display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:12px;color:var(--faint);text-align:center;padding:8px}
+.unit-image.img-missing .e-ph{display:flex}
+.unit-image.img-missing{min-height:140px}
+
+.section{margin-bottom:26px}
+.section h2{font-size:15px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section h2 small{font-size:11px;font-weight:600;color:var(--faint)}
+
+.line-row{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:14px;font-weight:700}
+
+.opt-rows{display:flex;flex-direction:column;gap:8px}
+.opt-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.opt-row-top{display:flex;align-items:center;gap:10px}
+.opt-row .tag{flex-shrink:0;font-size:10px;font-weight:700;color:var(--gold);background:rgba(201,169,110,.12);padding:3px 8px;border-radius:20px}
+.opt-row .name{flex:1;font-size:13.5px;font-weight:700}
+.opt-row .price{flex-shrink:0;font-size:13px;font-weight:700;color:var(--muted)}
+.opt-row .price.strike{text-decoration:line-through;color:var(--faint);font-weight:600}
+.opt-row-desc{margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);font-size:12px;color:var(--muted);line-height:1.6}
+.empty-note{font-size:13px;color:var(--faint)}
+
+.total-box{background:var(--ink);color:#fff;border-radius:14px;padding:22px 24px;margin-bottom:24px}
+.total-row{display:flex;justify-content:space-between;font-size:13.5px;color:rgba(255,255,255,.7);padding:5px 0}
+.total-row strong{color:#fff;font-weight:700}
+.total-row.grand{border-top:1px solid rgba(255,255,255,.18);margin-top:8px;padding-top:14px;font-size:19px;align-items:baseline}
+.total-row.grand strong{color:var(--gold);font-size:22px;font-weight:800}
+.total-row.grand .raw{font-size:12px;font-weight:500;color:rgba(255,255,255,.55)}
+
+.sheet-footer{display:flex;gap:10px;justify-content:center;margin-bottom:18px}
+.sheet-footer button{border:none;border-radius:8px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-print{background:var(--gold);color:var(--ink)}
+.btn-close{background:#fff;border:1px solid var(--border) !important;color:var(--muted)}
+.sheet-footer-note{text-align:center;font-size:11.5px;color:var(--faint);line-height:1.6}
+
+@media print{
+  body{background:#fff}
+  .no-print{display:none}
+  .sheet{padding:0;max-width:100%}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="sheet-header">
+    <div class="brand">도안자이 센텀리체</div>
+    <div class="doc-title">분양가 · 옵션 견적서</div>
+    <div class="doc-meta">발급일시 ${dateStr}</div>
+  </div>
+
+  <div class="unit-block">
+    <div class="unit-info">
+      <div class="unit-info-row"><span>단지</span><strong>${state.danji}</strong></div>
+      <div class="unit-info-row"><span>타입</span><strong>${state.type}</strong></div>
+      <div class="unit-info-row"><span>층수</span><strong>${state.band.label}</strong></div>
+    </div>
+    <div class="unit-image">
+      <img src="${typeImagePath(state.danji, state.type)}" alt="${state.type} 타입 이미지" onerror="this.style.display='none'; this.closest('.unit-image').classList.add('img-missing')">
+      <div class="e-ph">${state.type} 타입 이미지 준비중</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>확장비용</h2>
+    <div class="line-row"><span>${expansionLine}</span></div>
+  </div>
+
+  <div class="section">
+    <h2>무상 제공 옵션 <small>(합계 미포함)</small></h2>
+    <div class="opt-rows">${freeRows}</div>
+  </div>
+
+  <div class="section">
+    <h2>선택 옵션</h2>
+    <div class="opt-rows">${paidRows}</div>
+  </div>
+
+  <div class="total-box">
+    <div class="total-row"><span>분양가</span><strong>${fmtWon(basePrice)}</strong></div>
+    <div class="total-row"><span>확장비</span><strong>${fmtWon(expansionPrice)}</strong></div>
+    <div class="total-row"><span>옵션가</span><strong>${fmtWon(optTotal)}</strong></div>
+    <div class="total-row grand"><span>총 합계</span><strong>${fmtEok(total)} <span class="raw">(${fmtWon(total)})</span></strong></div>
+  </div>
+
+  <div class="sheet-footer no-print">
+    <button type="button" class="btn-print" onclick="window.print()">인쇄 / PDF 저장</button>
+    <button type="button" class="btn-close" onclick="window.close()">닫기</button>
+  </div>
+  <div class="sheet-footer-note">
+    문의 1566-6427 · 본 견적서는 상담 참고용이며 실제 계약 내용과 차이가 있을 수 있습니다.
+  </div>
+</div>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  if(!win){
+    alert('팝업이 차단되었습니다. 브라우저의 팝업 차단 설정을 확인해주세요.');
+    return;
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderDanjiList();
+el('step1').classList.add('open');
+renderOptTabs();
+renderChips();
+updateSummary();
+el('generateBtn').addEventListener('click', openEstimate);
+</script>
+</body>
+</html>
