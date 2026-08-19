@@ -755,6 +755,7 @@ async function submitForm(e) {
       form.style.display = 'none';
       note.style.cssText = 'text-align:center;font-size:14px;color:var(--gold);margin-top:16px;font-weight:700;';
       note.textContent = '✓ 신청이 완료되었습니다! 전담 상담원이 곧 연락드립니다.';
+      gtag('event', 'conversion', {'send_to': 'AW-18367927968/NJv6CLatxd0cEKCtwbZE'});
     } else {
       throw new Error('전송 실패');
     }
