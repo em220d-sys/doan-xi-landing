@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18367927968"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'AW-18367927968');
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>도안자이 센텀리체 — 타입·층수 분양가·옵션 계산기 (초안)</title>
@@ -279,7 +270,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 // 단지별 공급 타입 (실제 데이터: 도안자이_분양가_옵션_전체양식.xlsx 시트1 기준)
 const DANJI_TYPES = {
   "1단지": ["84A","84B","84C","84D","84E","99A","99B"],
-  "2단지": ["84A","84A1","84B","84B1","84C","84C1","115A","115B","115C","115C1","134"]
+  "2단지": ["84A","84A1","84B","84B1","84C","84C1","115A","115B","115C","115C1"]
 };
 
 // 단지·타입별 · 층수구간별 분양가 (실제 데이터) — 단지가 달라도 타입코드가 겹칠 수 있어 단지로 먼저 구분
@@ -416,9 +407,6 @@ const FLOOR_BANDS = {
       { "label": "5~9층", "price": 1036900000 },
       { "label": "10~19층", "price": 1048900000 },
       { "label": "20~29층", "price": 1058900000 }
-    ],
-    "134": [
-      { "label": "30층이상", "price": 2169900000 }
     ]
   }
 };
@@ -444,8 +432,7 @@ const EXPANSION_OPTIONS_BY_DANJI_TYPE = {
     "115A": [{ "id": "exp_2단지_115A", "name": "전체 확장", "price": 27900000 }],
     "115B": [{ "id": "exp_2단지_115B", "name": "전체 확장", "price": 26900000 }],
     "115C": [{ "id": "exp_2단지_115C", "name": "전체 확장", "price": 28900000 }],
-    "115C1": [{ "id": "exp_2단지_115C1", "name": "전체 확장", "price": 28900000 }],
-    "134": [{ "id": "exp_2단지_134", "name": "전체 확장", "price": 39900000 }]
+    "115C1": [{ "id": "exp_2단지_115C1", "name": "전체 확장", "price": 28900000 }]
   }
 };
 
@@ -456,84 +443,177 @@ const FREE_OPTIONS = [
   { "id": "free3", "name": "이탈라아산 포셀린타일", "price": 4670000 }
 ];
 
-// 유상 옵션 (실제 데이터) — types:null=전체 타입 공통, count=대수, note=짧으면 이름 뒤 표기/길면 설명으로 표시
-// (참고) 이 시트는 '타입'만 있고 '단지' 구분이 없어 같은 타입코드(84A 등)면 단지 무관 동일 적용됩니다
-const OPTION_CATEGORIES = [
+// 유상 옵션 (실제 데이터, 단지별 완전 분리) — types:null=해당 단지 전체 타입 공통, count=대수, note=짧으면 이름 뒤 표기/길면 설명으로 표시
+// 1단지·2단지는 같은 타입 코드(84A 등)라도 구조가 달라 가격이 다르므로, 단지별로 완전히 분리된 배열을 사용합니다
+const OPTION_CATEGORIES_BY_DANJI = {
+  "1단지": [
   { "key": "kitchen", "label": "주방", "items": [
-    { "id": "opt1", "name": "Style up", "price": 33492000, "types": ["84A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
-    { "id": "opt2", "name": "Style up", "price": 32686000, "types": ["84B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
-    { "id": "opt3", "name": "Style up", "price": 32270000, "types": ["84C"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
-    { "id": "opt4", "name": "Style up", "price": 33582000, "types": ["84D"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
-    { "id": "opt5", "name": "Style up", "price": 34387000, "types": ["84E"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
-    { "id": "opt6", "name": "Style up", "price": 40444000, "types": ["99A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
-    { "id": "opt7", "name": "Style up", "price": 40898000, "types": ["99B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
-    { "id": "opt8", "name": "쿡탑(디오스 전기 인덕션)", "price": 1253000, "types": null, "count": null, "note": "LG전자 BEI3ASB4BI" }
+    { "id": "d1_opt1", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 42011000, "types": ["84A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt2", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 41414000, "types": ["84B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt3", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 42644000, "types": ["84C"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt4", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 42076000, "types": ["84D"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt5", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 42881000, "types": ["84E"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt6", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 49425000, "types": ["99A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt7", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 49894000, "types": ["99B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt8", "name": "Style up", "price": 33492000, "types": ["84A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt9", "name": "Style up", "price": 32686000, "types": ["84B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt10", "name": "Style up", "price": 32270000, "types": ["84C"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt11", "name": "Style up", "price": 33582000, "types": ["84D"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt12", "name": "Style up", "price": 34387000, "types": ["84E"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt13", "name": "Style up", "price": 40444000, "types": ["99A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt14", "name": "Style up", "price": 40898000, "types": ["99B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d1_opt15", "name": "쿡탑(디오스 전기 인덕션)", "price": 1253000, "types": null, "count": null, "note": "LG전자 BEI3ASB4BI" }
   ]},
   { "key": "lighting", "label": "조명 및 실링팬", "items": [
-    { "id": "opt9", "name": "Style up", "price": 8823000, "types": ["84A"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
-    { "id": "opt10", "name": "Style up", "price": 9030000, "types": ["84B"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
-    { "id": "opt11", "name": "Style up", "price": 10374000, "types": ["84C"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
-    { "id": "opt12", "name": "Style up", "price": 8798000, "types": ["84D"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
-    { "id": "opt13", "name": "Style up", "price": 8798000, "types": ["84E"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
-    { "id": "opt14", "name": "Style up", "price": 9285000, "types": ["99A"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
-    { "id": "opt15", "name": "Style up", "price": 9300000, "types": ["99B"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" }
+    { "id": "d1_opt16", "name": "Style up", "price": 8823000, "types": ["84A"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d1_opt17", "name": "Style up", "price": 9030000, "types": ["84B"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d1_opt18", "name": "Style up", "price": 10374000, "types": ["84C"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d1_opt19", "name": "Style up", "price": 8798000, "types": ["84D"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d1_opt20", "name": "Style up", "price": 8798000, "types": ["84E"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d1_opt21", "name": "Style up", "price": 9285000, "types": ["99A"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d1_opt22", "name": "Style up", "price": 9300000, "types": ["99B"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" }
   ]},
   { "key": "individual", "label": "개별", "items": [
-    { "id": "opt16", "name": "욕실 고급수전/도기", "price": 2365000, "types": null, "count": null, "note": "①세면기, ②세면기 수전, ③샤워수전, ④비데일체형양변기(가족욕실), ⑤욕실 액세서리 및 샤워부스" },
-    { "id": "opt17", "name": "침실3 붙박이장", "price": 1339000, "types": null, "count": null, "note": null }
+    { "id": "d1_opt23", "name": "욕실 고급수전/도기", "price": 2365000, "types": null, "count": null, "note": "①세면기, ②세면기 수전, ③샤워수전, ④비데일체형양변기(가족욕실), ⑤욕실 액세서리 및 샤워부스" },
+    { "id": "d1_opt24", "name": "침실3 붙박이장", "price": 1339000, "types": null, "count": null, "note": null }
   ]},
   { "key": "bath", "label": "욕실", "items": [
-    { "id": "opt18", "name": "복합 환풍기", "price": 1344000, "types": null, "count": null, "note": "힘펠 FHD3-C150P_LUMI" }
+    { "id": "d1_opt25", "name": "복합 환풍기", "price": 1344000, "types": null, "count": null, "note": "힘펠 FHD3-C150P_LUMI" }
   ]},
   { "key": "ac", "label": "시스템에어컨", "items": [
-    { "id": "opt19", "name": "거실, 침실1", "price": 4340000, "types": ["84A"], "count": 2, "note": "기본" },
-    { "id": "opt20", "name": "거실, 침실1", "price": 4340000, "types": ["84B"], "count": 2, "note": "기본" },
-    { "id": "opt21", "name": "거실, 침실1", "price": 4340000, "types": ["84D"], "count": 2, "note": "기본" },
-    { "id": "opt22", "name": "거실, 침실1", "price": 4340000, "types": ["84E"], "count": 2, "note": "기본" },
-    { "id": "opt23", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84A"], "count": 4, "note": "기본" },
-    { "id": "opt24", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84B"], "count": 4, "note": "기본" },
-    { "id": "opt25", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84D"], "count": 4, "note": "기본" },
-    { "id": "opt26", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84E"], "count": 4, "note": "기본" },
-    { "id": "opt27", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84A"], "count": 5, "note": "기본" },
-    { "id": "opt28", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84B"], "count": 5, "note": "기본" },
-    { "id": "opt29", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84D"], "count": 5, "note": "기본" },
-    { "id": "opt30", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84E"], "count": 5, "note": "기본" },
-    { "id": "opt31", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84A"], "count": 3, "note": "주방 Style up" },
-    { "id": "opt32", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84B"], "count": 3, "note": "주방 Style up" },
-    { "id": "opt33", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84D"], "count": 3, "note": "주방 Style up" },
-    { "id": "opt34", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84E"], "count": 3, "note": "주방 Style up" },
-    { "id": "opt35", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84A"], "count": 5, "note": "주방 Style up" },
-    { "id": "opt36", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84B"], "count": 5, "note": "주방 Style up" },
-    { "id": "opt37", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84D"], "count": 5, "note": "주방 Style up" },
-    { "id": "opt38", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84E"], "count": 5, "note": "주방 Style up" },
-    { "id": "opt39", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84A"], "count": 3, "note": "주방 냉방강화" },
-    { "id": "opt40", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84B"], "count": 3, "note": "주방 냉방강화" },
-    { "id": "opt41", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84D"], "count": 3, "note": "주방 냉방강화" },
-    { "id": "opt42", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84E"], "count": 3, "note": "주방 냉방강화" },
-    { "id": "opt43", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84A"], "count": 5, "note": "주방 냉방강화" },
-    { "id": "opt44", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84B"], "count": 5, "note": "주방 냉방강화" },
-    { "id": "opt45", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84D"], "count": 5, "note": "주방 냉방강화" },
-    { "id": "opt46", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84E"], "count": 5, "note": "주방 냉방강화" },
-    { "id": "opt47", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84A"], "count": 6, "note": "주방 냉방강화" },
-    { "id": "opt48", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84B"], "count": 6, "note": "주방 냉방강화" },
-    { "id": "opt49", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84D"], "count": 6, "note": "주방 냉방강화" },
-    { "id": "opt50", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84E"], "count": 6, "note": "주방 냉방강화" },
-    { "id": "opt51", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84C"], "count": 3, "note": "기본" },
-    { "id": "opt52", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84C"], "count": 5, "note": "기본" },
-    { "id": "opt53", "name": "거실, 주방, 침실1", "price": 6470000, "types": ["99A"], "count": 3, "note": "주방 Style up" },
-    { "id": "opt54", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9660000, "types": ["99A"], "count": 5, "note": "주방 Style up" },
-    { "id": "opt55", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11120000, "types": ["99A"], "count": 6, "note": null },
-    { "id": "opt56", "name": "거실, 주방, 침실1", "price": 6470000, "types": ["99B"], "count": 3, "note": "주방 Style up" },
-    { "id": "opt57", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9660000, "types": ["99B"], "count": 5, "note": "주방 Style up" },
-    { "id": "opt58", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 1112000, "types": ["99B"], "count": 6, "note": null }
+    { "id": "d1_opt26", "name": "거실, 침실1", "price": 4340000, "types": ["84A"], "count": 2, "note": "기본" },
+    { "id": "d1_opt27", "name": "거실, 침실1", "price": 4340000, "types": ["84B"], "count": 2, "note": "기본" },
+    { "id": "d1_opt28", "name": "거실, 침실1", "price": 4340000, "types": ["84D"], "count": 2, "note": "기본" },
+    { "id": "d1_opt29", "name": "거실, 침실1", "price": 4340000, "types": ["84E"], "count": 2, "note": "기본" },
+    { "id": "d1_opt30", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84A"], "count": 4, "note": "기본" },
+    { "id": "d1_opt31", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84B"], "count": 4, "note": "기본" },
+    { "id": "d1_opt32", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84D"], "count": 4, "note": "기본" },
+    { "id": "d1_opt33", "name": "거실, 침실1, 침실2, 침실3", "price": 7920000, "types": ["84E"], "count": 4, "note": "기본" },
+    { "id": "d1_opt34", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84A"], "count": 5, "note": "기본" },
+    { "id": "d1_opt35", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84B"], "count": 5, "note": "기본" },
+    { "id": "d1_opt36", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84D"], "count": 5, "note": "기본" },
+    { "id": "d1_opt37", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84E"], "count": 5, "note": "기본" },
+    { "id": "d1_opt38", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84A"], "count": 3, "note": "주방 Style up" },
+    { "id": "d1_opt39", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84B"], "count": 3, "note": "주방 Style up" },
+    { "id": "d1_opt40", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84D"], "count": 3, "note": "주방 Style up" },
+    { "id": "d1_opt41", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84E"], "count": 3, "note": "주방 Style up" },
+    { "id": "d1_opt42", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84A"], "count": 5, "note": "주방 Style up" },
+    { "id": "d1_opt43", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84B"], "count": 5, "note": "주방 Style up" },
+    { "id": "d1_opt44", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84D"], "count": 5, "note": "주방 Style up" },
+    { "id": "d1_opt45", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84E"], "count": 5, "note": "주방 Style up" },
+    { "id": "d1_opt46", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84A"], "count": 3, "note": "주방 냉방강화" },
+    { "id": "d1_opt47", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84B"], "count": 3, "note": "주방 냉방강화" },
+    { "id": "d1_opt48", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84D"], "count": 3, "note": "주방 냉방강화" },
+    { "id": "d1_opt49", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84E"], "count": 3, "note": "주방 냉방강화" },
+    { "id": "d1_opt50", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84A"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "d1_opt51", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84B"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "d1_opt52", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84D"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "d1_opt53", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84E"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "d1_opt54", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84A"], "count": 6, "note": "주방 냉방강화" },
+    { "id": "d1_opt55", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84B"], "count": 6, "note": "주방 냉방강화" },
+    { "id": "d1_opt56", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84D"], "count": 6, "note": "주방 냉방강화" },
+    { "id": "d1_opt57", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11110000, "types": ["84E"], "count": 6, "note": "주방 냉방강화" },
+    { "id": "d1_opt58", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84C"], "count": 3, "note": "기본" },
+    { "id": "d1_opt59", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84C"], "count": 5, "note": "기본" },
+    { "id": "d1_opt60", "name": "거실, 주방, 침실1", "price": 6470000, "types": ["99A"], "count": 3, "note": "주방 Style up" },
+    { "id": "d1_opt61", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9660000, "types": ["99A"], "count": 5, "note": "주방 Style up" },
+    { "id": "d1_opt62", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11120000, "types": ["99A"], "count": 6, "note": "주방 Style up" },
+    { "id": "d1_opt63", "name": "거실, 주방, 침실1", "price": 6470000, "types": ["99B"], "count": 3, "note": "주방 Style up" },
+    { "id": "d1_opt64", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9660000, "types": ["99B"], "count": 5, "note": "주방 Style up" },
+    { "id": "d1_opt65", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11120000, "types": ["99B"], "count": 6, "note": "주방 Style up" }
   ]},
   { "key": "vent", "label": "환기형 공기청정시스템", "items": [
-    { "id": "opt59", "name": "거실, 주방", "price": 2150000, "types": null, "count": 2, "note": null },
-    { "id": "opt60", "name": "거실, 침실1", "price": 2150000, "types": null, "count": 2, "note": null },
-    { "id": "opt61", "name": "거실, 주방, 침실1", "price": 3200000, "types": null, "count": 3, "note": null },
-    { "id": "opt62", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 5300000, "types": null, "count": 5, "note": null }
-  ]}
-];
+    { "id": "d1_opt66", "name": "거실, 주방", "price": 2150000, "types": null, "count": 2, "note": null },
+    { "id": "d1_opt67", "name": "거실, 침실1", "price": 2150000, "types": null, "count": 2, "note": null },
+    { "id": "d1_opt68", "name": "거실, 주방, 침실1", "price": 3200000, "types": null, "count": 3, "note": null },
+    { "id": "d1_opt69", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 5300000, "types": null, "count": 5, "note": null }
+  ]},
+  ],
+  "2단지": [
+  { "key": "kitchen", "label": "주방", "items": [
+    { "id": "d2_opt1", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 42015000, "types": ["84A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt2", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 42005000, "types": ["84A1"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt3", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 44187000, "types": ["84B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt4", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 44190000, "types": ["84B1"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt5", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 41935000, "types": ["84C"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt6", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 41906000, "types": ["84C1"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt7", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 50116000, "types": ["115A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt8", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 50116000, "types": ["115B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt9", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 49810000, "types": ["115C"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt10", "name": "조명 및 실링팬 Style up+ 주방 Style up", "price": 49899000, "types": ["115C1"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt11", "name": "Style up", "price": 33535000, "types": ["84A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt12", "name": "Style up", "price": 33554000, "types": ["84A1"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt13", "name": "Style up", "price": 35881000, "types": ["84B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt14", "name": "Style up", "price": 35868000, "types": ["84B1"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt15", "name": "Style up", "price": 33500000, "types": ["84C"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt16", "name": "Style up", "price": 33498000, "types": ["84C1"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt17", "name": "Style up", "price": 40729000, "types": ["115A"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt18", "name": "Style up", "price": 40729000, "types": ["115B"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt19", "name": "Style up", "price": 40857000, "types": ["115C"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt20", "name": "Style up", "price": 40948000, "types": ["115C1"], "count": null, "note": "①레이아웃 변경(해당타입)[현관창고 확대+와이드 다이닝 공간/팬트리+홈바(유럽산 하드웨어)][84C는 홈바 미적용, 99A,B는 팬트리 미적용],\n②수입주방가구(Arredo3 수납장+유럽산 하드웨어 및 액세서리), ③특화수전(GESSI), ④세라믹 패널 상판, ⑤우물천장 및 간접조명,\n⑥루버천장, ⑦특화 식탁조명, ⑧독립형 후드" },
+    { "id": "d2_opt21", "name": "쿡탑(디오스 전기 인덕션)", "price": 1253000, "types": null, "count": null, "note": "LG전자 BEI3ASB4BI" }
+  ]},
+  { "key": "lighting", "label": "조명 및 실링팬", "items": [
+    { "id": "d2_opt22", "name": "Style up", "price": 8784000, "types": ["84A"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d2_opt23", "name": "Style up", "price": 8755000, "types": ["84A1"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d2_opt24", "name": "Style up", "price": 8306000, "types": ["84B"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d2_opt25", "name": "Style up", "price": 8322000, "types": ["84B1"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d2_opt26", "name": "Style up", "price": 8739000, "types": ["84C"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d2_opt27", "name": "Style up", "price": 8712000, "types": ["84C1"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d2_opt28", "name": "Style up", "price": 9689000, "types": ["115A"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d2_opt29", "name": "Style up", "price": 9689000, "types": ["115B"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d2_opt30", "name": "Style up", "price": 9255000, "types": ["115C"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" },
+    { "id": "d2_opt31", "name": "Style up", "price": 9253000, "types": ["115C1"], "count": null, "note": "①우물천장 내 {건축화조명 및 시트패널}, ②침실특화조명, ③단천장+리니어조명[거실 전/후면], ④실링팬" }
+  ]},
+  { "key": "individual", "label": "개별", "items": [
+    { "id": "d2_opt32", "name": "욕실 고급수전/도기", "price": 2365000, "types": null, "count": null, "note": "①세면기, ②세면기 수전, ③샤워수전, ④비데일체형양변기(가족욕실), ⑤욕실 액세서리 및 샤워부스" },
+    { "id": "d2_opt33", "name": "침실3 붙박이장", "price": 1339000, "types": null, "count": null, "note": null }
+  ]},
+  { "key": "bath", "label": "욕실", "items": [
+    { "id": "d2_opt34", "name": "복합 환풍기", "price": 1344000, "types": null, "count": null, "note": "힘펠 FHD3-C150P_LUMI" }
+  ]},
+  { "key": "ac", "label": "시스템에어컨", "items": [
+    { "id": "d2_opt35", "name": "거실, 침실1", "price": 4340000, "types": ["84A"], "count": 2, "note": "기본" },
+    { "id": "d2_opt36", "name": "거실, 침실1", "price": 4340000, "types": ["84A1"], "count": 2, "note": "기본" },
+    { "id": "d2_opt37", "name": "거실, 침실1", "price": 4340000, "types": ["84C"], "count": 2, "note": "기본" },
+    { "id": "d2_opt38", "name": "거실, 침실1", "price": 4340000, "types": ["84C1"], "count": 2, "note": "기본" },
+    { "id": "d2_opt39", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84A"], "count": 5, "note": "기본" },
+    { "id": "d2_opt40", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84A1"], "count": 5, "note": "기본" },
+    { "id": "d2_opt41", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84C"], "count": 5, "note": "기본" },
+    { "id": "d2_opt42", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 9370000, "types": ["84C1"], "count": 5, "note": "기본" },
+    { "id": "d2_opt43", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84A"], "count": 3, "note": "주방 Style up" },
+    { "id": "d2_opt44", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84A1"], "count": 3, "note": "주방 Style up" },
+    { "id": "d2_opt45", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84C"], "count": 3, "note": "주방 Style up" },
+    { "id": "d2_opt46", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84C1"], "count": 3, "note": "주방 Style up" },
+    { "id": "d2_opt47", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84A"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "d2_opt48", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84A1"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "d2_opt49", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84C"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "d2_opt50", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84C1"], "count": 5, "note": "주방 냉방강화" },
+    { "id": "d2_opt51", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84B"], "count": 3, "note": "기본" },
+    { "id": "d2_opt52", "name": "거실, 주방, 침실1", "price": 5970000, "types": ["84B1"], "count": 3, "note": "기본" },
+    { "id": "d2_opt53", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84B"], "count": 5, "note": "기본" },
+    { "id": "d2_opt54", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9370000, "types": ["84B1"], "count": 5, "note": "기본" },
+    { "id": "d2_opt55", "name": "거실, 주방, 침실1", "price": 6490000, "types": ["115A"], "count": 3, "note": "주방 Style up" },
+    { "id": "d2_opt56", "name": "거실, 주방, 침실1", "price": 6490000, "types": ["115B"], "count": 3, "note": "주방 Style up" },
+    { "id": "d2_opt57", "name": "거실, 주방, 침실1", "price": 6490000, "types": ["115C"], "count": 3, "note": "주방 Style up" },
+    { "id": "d2_opt58", "name": "거실, 주방, 침실1", "price": 6490000, "types": ["115C1"], "count": 3, "note": "주방 Style up" },
+    { "id": "d2_opt59", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9680000, "types": ["115A"], "count": 5, "note": "주방 Style up" },
+    { "id": "d2_opt60", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9680000, "types": ["115B"], "count": 5, "note": "주방 Style up" },
+    { "id": "d2_opt61", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9680000, "types": ["115C"], "count": 5, "note": "주방 Style up" },
+    { "id": "d2_opt62", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 9680000, "types": ["115C1"], "count": 5, "note": "주방 Style up" },
+    { "id": "d2_opt63", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11140000, "types": ["115A"], "count": 6, "note": "주방 Style up" },
+    { "id": "d2_opt64", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11140000, "types": ["115B"], "count": 6, "note": "주방 Style up" },
+    { "id": "d2_opt65", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11140000, "types": ["115C"], "count": 6, "note": "주방 Style up" },
+    { "id": "d2_opt66", "name": "거실, 주방, 침실1, 침실2, 침실3, 알파룸", "price": 11140000, "types": ["115C1"], "count": 6, "note": "주방 Style up" }
+  ]},
+  { "key": "vent", "label": "환기형 공기청정시스템", "items": [
+    { "id": "d2_opt67", "name": "거실, 주방", "price": 2150000, "types": null, "count": 2, "note": null },
+    { "id": "d2_opt68", "name": "거실, 침실1", "price": 2150000, "types": null, "count": 2, "note": null },
+    { "id": "d2_opt69", "name": "거실, 주방, 침실1", "price": 3200000, "types": null, "count": 3, "note": null },
+    { "id": "d2_opt70", "name": "거실, 주방, 침실1, 침실2, 침실3", "price": 5300000, "types": null, "count": 5, "note": null }
+  ]},
+  ],
+};
 
 /* ============================================================
    STATE
@@ -543,7 +623,7 @@ const state = {
   type: null,
   band: null, // { label, price }
   expansion: null,
-  currentCat: OPTION_CATEGORIES[0].key,
+  currentCat: OPTION_CATEGORIES_BY_DANJI['1단지'][0].key,
   selectedOptions: new Map(), // key: cat::id -> {name, price}
 };
 
@@ -595,6 +675,7 @@ function selectDanji(danji){
   state.band = null;
   state.expansion = null;
   state.selectedOptions.clear();
+  state.currentCat = OPTION_CATEGORIES_BY_DANJI[danji][0].key;
   el('danjiValue').textContent = danji;
   el('typeValue').textContent = '선택해주세요';
   el('floorValue').textContent = '타입을 먼저 선택해주세요';
@@ -616,6 +697,8 @@ function selectDanji(danji){
   el('priceCard').style.display = 'none';
 
   renderTypeList();
+  renderOptTabs();
+  renderOptList();
   renderChips();
   updateSummary();
 }
@@ -772,10 +855,14 @@ function renderFreeList(){
 /* ============================================================
    STEP 6 : 유상 옵션 선택
    ============================================================ */
+function currentCategories(){
+  return OPTION_CATEGORIES_BY_DANJI[state.danji] || OPTION_CATEGORIES_BY_DANJI['1단지'];
+}
+
 function renderOptTabs(){
   const wrap = el('catTabs');
   wrap.innerHTML = '';
-  OPTION_CATEGORIES.forEach(cat=>{
+  currentCategories().forEach(cat=>{
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'cat-tab' + (state.currentCat === cat.key ? ' active' : '');
@@ -808,7 +895,7 @@ function resolveItem(item){
 function renderOptList(){
   const wrap = el('optList');
   wrap.innerHTML = '';
-  const cat = OPTION_CATEGORIES.find(c=> c.key === state.currentCat);
+  const cat = currentCategories().find(c=> c.key === state.currentCat);
   if(!cat) return;
   cat.items.forEach(item=>{
     const resolved = resolveItem(item);
@@ -1082,14 +1169,6 @@ renderOptTabs();
 renderChips();
 updateSummary();
 el('generateBtn').addEventListener('click', openEstimate);
-</script>
-<script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
-<script type="text/javascript">
-if(!wcs_add) var wcs_add = {};
-wcs_add["wa"] = "259254fda6c8f40";
-if(window.wcs) {
-  wcs_do();
-}
 </script>
 </body>
 </html>
