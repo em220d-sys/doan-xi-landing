@@ -983,15 +983,9 @@ function updateSummary(){
 
 /* ============================================================
    견적서 페이지 생성 (STEP 1~6 선택 결과 → 새 탭)
-   사진은 타입 이미지만 사용합니다. 아래 파일을 images/types/ 폴더에
-   넣어주시면 자동으로 표시됩니다 (없으면 "이미지 준비중" 표시).
-     - 타입 사진 : images/types/{단지슬러그}_{타입}.jpg   예) images/types/1danji_84A.jpg
-     (1단지·2단지에 84A/84B/84C처럼 같은 타입명이 겹쳐서 단지 구분자를 파일명 앞에 붙입니다)
-   무상/유상 옵션은 이미지 없이 이름·가격 텍스트로만 표시됩니다.
+   인쇄/PDF 저장 시 잘리는 문제로 타입 이미지는 견적서에 표시하지 않습니다.
+   무상/유상 옵션도 이미지 없이 이름·가격 텍스트로만 표시됩니다.
    ============================================================ */
-const DANJI_SLUG = { '1단지': '1danji', '2단지': '2danji' };
-function typeImagePath(danji, type){ return 'images/types/' + (DANJI_SLUG[danji] || danji) + '_' + type + '.jpg'; }
-
 function optionRow(tag, title, priceText, priceClass, desc){
   return `
     <div class="opt-row">
@@ -1052,14 +1046,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',-apple-syste
 .doc-meta{font-size:12px;color:var(--faint)}
 
 .unit-block{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:24px}
-.unit-info{display:flex;flex-wrap:wrap;gap:10px 24px;margin-bottom:18px}
+.unit-info{display:flex;flex-wrap:wrap;gap:10px 24px}
 .unit-info-row{display:flex;align-items:baseline;gap:8px;font-size:14px;color:var(--muted)}
 .unit-info-row strong{color:var(--ink);font-size:16px}
-.unit-image{width:100%;min-height:200px;border-radius:10px;overflow:hidden;position:relative;background:var(--surface2);display:flex;justify-content:center}
-.unit-image img{max-width:100%;height:auto;max-height:640px;display:block;object-fit:contain}
-.unit-image .e-ph{display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:12px;color:var(--faint);text-align:center;padding:8px}
-.unit-image.img-missing .e-ph{display:flex}
-.unit-image.img-missing{min-height:140px}
 
 .section{margin-bottom:26px}
 .section h2{font-size:15px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
@@ -1111,10 +1100,6 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',-apple-syste
       <div class="unit-info-row"><span>타입</span><strong>${state.type}</strong></div>
       <div class="unit-info-row"><span>층수</span><strong>${state.band.label}</strong></div>
     </div>
-    <div class="unit-image">
-      <img src="${typeImagePath(state.danji, state.type)}" alt="${state.type} 타입 이미지" onerror="this.style.display='none'; this.closest('.unit-image').classList.add('img-missing')">
-      <div class="e-ph">${state.type} 타입 이미지 준비중</div>
-    </div>
   </div>
 
   <div class="section">
@@ -1150,7 +1135,13 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',-apple-syste
 </body>
 </html>`;
 
-  const win = window.open('', '_blank');
+  let win;
+  try {
+    win = window.open('', '_blank');
+  } catch(e){
+    alert('견적서 새 탭을 열 수 없습니다. 브라우저의 팝업 차단 설정을 확인해주세요.');
+    return;
+  }
   if(!win){
     alert('팝업이 차단되었습니다. 브라우저의 팝업 차단 설정을 확인해주세요.');
     return;
