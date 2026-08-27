@@ -51,14 +51,19 @@ img{max-width:100%;height:auto;display:block}
 .ubar b{color:var(--gold);font-weight:700}
 
 /* GNB */
-#gnb{position:sticky;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:76px;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#gnb{position:sticky;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 40px;height:76px;background:#ffffff;border-bottom:1px solid var(--line)}
 .gnb-logo img{height:34px;width:auto}
 .gnb-nav{display:flex;gap:26px}
 .gnb-link{font-size:20px;font-weight:700;color:var(--text-dim);transition:color .2s}
 .gnb-link:hover{color:var(--navy)}
-.gnb-tel{display:flex;align-items:center;gap:8px;background:var(--navy);color:#fff;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:700;transition:background .2s}
+.gnb-tel{display:flex;align-items:center;gap:8px;background:var(--navy);color:#fff;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:700;transition:background .2s;flex-shrink:0;white-space:nowrap}
 .gnb-tel:hover{background:var(--navy2)}
 @media(max-width:900px){.gnb-nav{display:none}}
+@media(max-width:480px){
+  .gnb-logo img{height:26px}
+  .gnb-tel{padding:9px 14px;font-size:12px}
+  .gnb-tel-full{display:none}
+}
 
 /* HERO */
 .hero{position:relative;height:100svh;min-height:600px;display:flex;align-items:flex-end;overflow:hidden}
@@ -66,9 +71,10 @@ img{max-width:100%;height:auto;display:block}
 .hero-bg img{width:100%;height:100%;object-fit:cover;opacity:.8}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,20,40,.94) 0%,rgba(11,20,40,.25) 55%,rgba(11,20,40,.45) 100%)}
 .hero-content{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto;padding:0 40px 90px}
-.hero-label{font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:18px}
+.hero-label{font-size:14px;font-weight:700;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
+.hero-tagline{font-size:clamp(15px,2vw,19px);font-weight:700;color:#fff;margin-bottom:18px;letter-spacing:.01em}
 .hero-title{font-size:clamp(36px,5.5vw,68px);font-weight:800;line-height:1.15;margin-bottom:14px;color:#ffffff}
-.hero-sub{font-size:clamp(14px,1.8vw,18px);font-weight:400;color:rgba(255,255,255,.82);margin-bottom:38px;letter-spacing:.02em}
+.hero-sub{font-size:clamp(16px,1.8vw,20px);font-weight:400;color:rgba(255,255,255,.82);margin-bottom:38px;letter-spacing:.02em}
 .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
 .btn-navy{background:var(--gold);color:var(--navy);padding:15px 32px;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:.02em;transition:background .2s}
 .btn-navy:hover{background:#dab876}
@@ -219,7 +225,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 40px 100px
 @media(max-width:900px){
   .wrap{padding:0 24px}
   #gnb{padding:0 24px}
-  .hero-content{padding:0 24px 60px}
+  .hero-content{padding:0 24px 32px}
   .overview-grid,.loc-grid,.design-arts{grid-template-columns:1fr;gap:40px}
   .loc-cards,.design-feats,.comm-cats{grid-template-columns:1fr}
   .prem-grid{grid-template-columns:1fr 1fr}
@@ -259,7 +265,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 40px 100px
     <a class="gnb-link" href="#system">시스템</a>
     <a class="gnb-link" href="#floorplans">평면안내</a>
   </nav>
-  <a class="gnb-tel" href="tel:15666427">☎ 상담신청 1566-6427</a>
+  <a class="gnb-tel" href="tel:15666427">☎ <span class="gnb-tel-full">상담신청 </span>1566-6427</a>
 </header>
 
 <!-- HERO -->
@@ -270,6 +276,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 40px 100px
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="hero-label fade-up">GS건설 자이 · 도안신도시 · 총 2,293세대</div>
+    <div class="hero-tagline fade-up" style="transition-delay:.05s"><b style="color:var(--gold)">자이(XI)</b>의 정점에서 도안을 완성하다</div>
     <h1 class="hero-title fade-up" style="transition-delay:.1s">대전의 새로운 중심,<br>도안자이 센텀리체</h1>
     <p class="hero-sub fade-up" style="transition-delay:.2s">도안신도시 2,293세대 자이 대단지 · 선착순 동·호 지정 계약</p>
     <div class="hero-cta fade-up" style="transition-delay:.3s">
