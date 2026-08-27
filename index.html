@@ -25,224 +25,212 @@
 <meta property="og:site_name" content="도안자이 센텀리체">
 <meta name="description" content="대전 도안신도시 최중심 프리미엄 아파트. 지금 바로 상담 신청하세요. ☎ 1566-6427">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
 <style>
 :root{
-  --bg:#ffffff;--bg2:#f4f5f8;
-  --gold:#c9a96e;--gold-light:#e0c88a;
-  --white:#ffffff;--text:#1a1a2e;--gray1:#5a6478;--gray2:#8a93a6;
-  --border:rgba(201,169,110,0.25);--card:rgba(0,0,0,0.03);
+  --bg:#ffffff;
+  --bg2:#f4f6f9;
+  --navy:#132242;
+  --navy2:#1c3363;
+  --gold:#c9a15f;
+  --gold-dark:#a9803f;
+  --text:#1c2230;
+  --text-dim:#5b6270;
+  --line:#e1e4ea;
 }
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;word-break:keep-all;min-width:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Pretendard',sans-serif;line-height:1.6;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:'NanumSquare',sans-serif;line-height:1.6;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
 img{max-width:100%;height:auto;display:block}
+.wrap{max-width:1180px;margin:0 auto;padding:0 40px}
+.rounded-img{border-radius:14px;overflow:hidden}
+
+/* UTILITY BAR */
+.ubar{background:var(--navy);color:rgba(255,255,255,.75);font-size:12px;font-weight:400;text-align:center;padding:8px 20px;letter-spacing:.02em}
+.ubar b{color:var(--gold);font-weight:700}
 
 /* GNB */
-#gnb{
-  position:fixed;top:0;left:0;right:0;z-index:200;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 40px;height:70px;
-  background:transparent;border-bottom:1px solid transparent;
-  transition:background .4s,border-color .4s;
-}
-#gnb.scrolled{background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);border-color:var(--border);box-shadow:0 2px 20px rgba(0,0,0,.06)}
-.gnb-logo{display:flex;align-items:center;gap:12px}
-.gnb-logo img{height:36px;width:auto}
-.gnb-nav{display:flex;align-items:center;gap:24px}
-.gnb-link{font-size:13px;font-weight:500;color:var(--text);transition:color .2s;letter-spacing:.03em}
-.gnb-link:hover{color:var(--gold)}
-.gnb-tel{
-  display:flex;align-items:center;gap:8px;
-  background:var(--gold);color:var(--bg);
-  padding:8px 18px;border-radius:4px;
-  font-size:13px;font-weight:700;letter-spacing:.05em;
-  transition:background .2s;white-space:nowrap;
-}
-.gnb-tel:hover{background:var(--gold-light)}
+#gnb{position:sticky;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:76px;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.gnb-logo img{height:34px;width:auto}
+.gnb-nav{display:flex;gap:26px}
+.gnb-link{font-size:20px;font-weight:700;color:var(--text-dim);transition:color .2s}
+.gnb-link:hover{color:var(--navy)}
+.gnb-tel{display:flex;align-items:center;gap:8px;background:var(--navy);color:#fff;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:700;transition:background .2s}
+.gnb-tel:hover{background:var(--navy2)}
+@media(max-width:900px){.gnb-nav{display:none}}
 
 /* HERO */
 .hero{position:relative;height:100svh;min-height:600px;display:flex;align-items:flex-end;overflow:hidden}
-.hero-bg{position:absolute;inset:0;background:#07090f}
-.hero-bg img{width:100%;height:100%;object-fit:cover;opacity:.75}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,9,15,.92) 0%,rgba(7,9,15,.2) 55%,rgba(7,9,15,.45) 100%)}
-.hero-content{position:relative;z-index:2;width:100%;max-width:1200px;margin:0 auto;padding:0 40px 90px}
-.hero-label{font-size:12px;font-weight:500;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:18px}
-.hero-title{font-family:'Pretendard',sans-serif;font-size:clamp(36px,5.5vw,68px);font-weight:800;line-height:1.15;margin-bottom:14px;color:#ffffff}
-.hero-sub{font-size:clamp(14px,1.8vw,18px);color:rgba(255,255,255,.8);margin-bottom:38px;letter-spacing:.02em}
+.hero-bg{position:absolute;inset:0;background:#0c1526}
+.hero-bg img{width:100%;height:100%;object-fit:cover;opacity:.8}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,20,40,.94) 0%,rgba(11,20,40,.25) 55%,rgba(11,20,40,.45) 100%)}
+.hero-content{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto;padding:0 40px 90px}
+.hero-label{font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:18px}
+.hero-title{font-size:clamp(36px,5.5vw,68px);font-weight:800;line-height:1.15;margin-bottom:14px;color:#ffffff}
+.hero-sub{font-size:clamp(14px,1.8vw,18px);font-weight:400;color:rgba(255,255,255,.82);margin-bottom:38px;letter-spacing:.02em}
 .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
-.btn-gold{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--bg);padding:15px 32px;border-radius:4px;font-size:15px;font-weight:700;letter-spacing:.05em;transition:background .2s}
-.btn-gold:hover{background:var(--gold-light)}
-.btn-outline{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--gold);color:var(--gold);padding:14px 28px;border-radius:4px;font-size:15px;font-weight:600;letter-spacing:.03em;transition:background .2s,color .2s}
-.btn-outline:hover{background:var(--gold);color:var(--bg)}
+.btn-navy{background:var(--gold);color:var(--navy);padding:15px 32px;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:.02em;transition:background .2s}
+.btn-navy:hover{background:#dab876}
+.btn-gold-out{border:1.5px solid rgba(255,255,255,.5);color:#fff;padding:13.5px 28px;border-radius:6px;font-size:15px;font-weight:700;transition:background .2s,border-color .2s}
+.btn-gold-out:hover{background:rgba(255,255,255,.12);border-color:#fff}
 
-/* BENEFITS STRIP */
-.benefits-strip{background:var(--gold);overflow:hidden}
-.benefits-inner{display:grid;grid-template-columns:repeat(4,1fr);max-width:1200px;margin:0 auto}
-.benefit-item{padding:26px 20px;border-left:1px solid rgba(0,0,0,.12);text-align:center}
-.benefit-item:first-child{border-left:none}
-.benefit-num{font-family:'Pretendard',sans-serif;font-size:16px;font-weight:600;letter-spacing:.2em;color:rgba(0,0,0,.4);text-transform:uppercase;margin-bottom:6px}
-.benefit-title{font-size:20px;font-weight:700;color:var(--bg);margin-bottom:4px}
-.benefit-desc{font-size:18px;font-weight:700;color:rgba(0,0,0,.6)}
+/* BENEFITS */
+.benefits{background:var(--navy)}
+.benefits-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.benefit{padding:34px 26px;border-left:1px solid rgba(255,255,255,.12)}
+.benefit:first-child{border-left:none}
+.benefit-badge{display:inline-block;background:var(--gold);color:var(--navy);font-size:16px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:12px;letter-spacing:.08em}
+.benefit-title{color:#fff;font-size:16px;font-weight:700;margin-bottom:4px}
+.benefit-desc{color:rgba(255,255,255,.65);font-size:18px;font-weight:700}
+@media(max-width:800px){.benefits-grid{grid-template-columns:1fr 1fr}.benefit:nth-child(3){border-left:none;border-top:1px solid rgba(255,255,255,.12)}.benefit:nth-child(4){border-top:1px solid rgba(255,255,255,.12)}}
 
-/* SECTION COMMON */
-.section-eyebrow{font-size:17px;font-weight:700;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
-.section-title{font-family:'Pretendard',sans-serif;font-size:clamp(32px,3.5vw,46px);font-weight:800;line-height:1.25;margin-bottom:14px}
-.section-desc{font-size:21px;font-weight:700;color:var(--gray1);line-height:1.85;max-width:540px;margin-bottom:44px}
-.divider{width:44px;height:2px;background:var(--gold);margin-bottom:22px}
+/* SECTION SCAFFOLD */
+section{padding:100px 0}
+.badge-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--bg2);color:var(--navy);font-size:17px;font-weight:700;letter-spacing:.1em;padding:7px 16px;border-radius:20px;margin-bottom:18px}
+.badge-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold)}
+h2.headline{font-size:clamp(32px,3.5vw,46px);font-weight:800;color:var(--navy);margin-bottom:14px;line-height:1.25}
+.lede{font-size:21px;font-weight:700;color:var(--text-dim);max-width:540px;margin-bottom:48px;line-height:1.85}
 
 /* OVERVIEW */
 #overview{background:var(--bg2)}
-.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1200px;margin:0 auto;padding:120px 40px}
-.overview-table{width:100%;border-collapse:collapse;margin-top:28px}
-.overview-table tr{border-bottom:1px solid var(--border)}
-.overview-table th{text-align:left;padding:13px 0;font-size:18px;font-weight:700;color:var(--gold);letter-spacing:.08em;width:120px;vertical-align:top}
-.overview-table td{padding:13px 0;font-size:20px;font-weight:700;color:rgba(26,26,46,.85);line-height:1.65}
-.overview-img{border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.12)}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.spec-card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.spec{width:100%;border-collapse:collapse;table-layout:fixed}
+.spec tr{border-top:1px solid var(--line)}
+.spec tr:first-child{border-top:none}
+.spec th{text-align:left;background:var(--bg2);padding:16px 20px;font-size:18px;font-weight:700;color:var(--navy);width:110px;vertical-align:top}
+.spec td{padding:16px 20px;font-size:20px;font-weight:700;color:var(--text);line-height:1.65}
+.spec td small{display:block;color:var(--text-dim);font-size:18px;font-weight:700;margin-top:4px}
+.overview-art img{box-shadow:0 20px 60px rgba(0,0,0,.12)}
 
 /* LOCATION */
-#location{background:var(--bg)}
-.location-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1200px;margin:0 auto;padding:120px 40px}
-.location-features{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:32px}
-.loc-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:22px}
-.loc-icon{font-size:32px;margin-bottom:10px}
-.loc-title{font-size:20px;font-weight:700;color:var(--gold);margin-bottom:6px}
-.loc-desc{font-size:19px;font-weight:700;color:var(--gray1);line-height:1.7}
+.loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.loc-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+.loc-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px}
+.loc-icon{width:44px;height:44px;background:var(--bg2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px}
+.loc-title{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.loc-desc{font-size:19px;font-weight:700;color:var(--text-dim);line-height:1.7}
+.loc-art img{box-shadow:0 20px 60px rgba(0,0,0,.15)}
 
 /* PREMIUM */
 #premium{background:var(--bg2)}
-.premium-wrap{max-width:1200px;margin:0 auto;padding:120px 40px}
-.premium-center{text-align:center;margin-bottom:48px}
-.premium-center .divider{margin:14px auto 22px}
-.premium-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
-.prem-card{background:var(--card);border:1px solid var(--border);padding:36px 28px;position:relative;overflow:hidden;transition:background .3s}
-.prem-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s}
-.prem-card:hover{background:rgba(0,0,0,.06)}
-.prem-card:hover::before{transform:scaleX(1)}
-.prem-num{font-family:'Pretendard',sans-serif;font-size:42px;font-weight:800;color:rgba(201,169,110,.2);line-height:1;margin-bottom:14px}
-.prem-title{font-size:21px;font-weight:700;color:var(--text);margin-bottom:8px}
-.prem-desc{font-size:19px;font-weight:700;color:var(--gray1);line-height:1.75}
-.premium-img{margin-top:56px;border-radius:8px;overflow:hidden}
+.prem-center{text-align:center;margin-bottom:52px}
+.prem-center .badge-eyebrow,.prem-center .lede{margin-left:auto;margin-right:auto}
+.prem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.prem-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:30px 26px}
+.prem-num{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;background:var(--navy);color:var(--gold);font-size:16px;font-weight:800;border-radius:8px;margin-bottom:16px}
+.prem-title{font-size:21px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.prem-desc{font-size:19px;font-weight:700;color:var(--text-dim);line-height:1.75}
+@media(max-width:800px){.prem-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.prem-grid{grid-template-columns:1fr}}
 
 /* DESIGN */
-#design{background:var(--bg)}
-.design-wrap{max-width:1200px;margin:0 auto;padding:120px 40px}
-.design-img-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:44px 0}
-.design-img-item{border-radius:8px;overflow:hidden}
-.design-features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.df-card{padding:28px 22px;background:var(--card);border:1px solid var(--border);border-radius:8px}
-.df-title{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:7px}
-.df-desc{font-size:13px;color:var(--gray1);line-height:1.75}
+.design-arts{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:48px}
+.design-arts .stack{display:grid;gap:16px}
+.design-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feat{background:var(--bg2);border-radius:14px;padding:26px}
+.feat-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:7px}
+.feat-desc{font-size:13px;font-weight:400;color:var(--text-dim);line-height:1.75}
+@media(max-width:800px){.design-arts,.design-feats{grid-template-columns:1fr}}
 
 /* COMMUNITY */
 #community{background:var(--bg2)}
-.community-wrap{max-width:1200px;margin:0 auto;padding:120px 40px}
-.comm-center{text-align:center;margin-bottom:0}
-.comm-center .divider{margin:14px auto 22px}
-.comm-img{border-radius:10px;overflow:hidden;margin:44px 0;box-shadow:0 20px 60px rgba(0,0,0,.12)}
-.comm-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.comm-cat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:28px}
-.comm-cat-title{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+.comm-art{margin-bottom:40px}
+.comm-art img{box-shadow:0 20px 60px rgba(0,0,0,.12)}
+.comm-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.comm-cat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px}
+.comm-cat-title{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);background:var(--bg2);display:inline-block;padding:5px 12px;border-radius:20px;margin-bottom:16px}
 .comm-list{list-style:none}
-.comm-list li{font-size:13px;color:var(--gray1);padding:5px 0;border-bottom:1px solid rgba(0,0,0,.07);display:flex;align-items:center;gap:8px}
+.comm-list li{font-size:13px;font-weight:400;color:var(--text-dim);padding:7px 0;border-top:1px solid var(--line);display:flex;align-items:center;gap:8px}
 .comm-list li::before{content:'·';color:var(--gold);flex-shrink:0}
-.comm-list li:last-child{border-bottom:none}
+.comm-list li:first-child{border-top:none}
+@media(max-width:800px){.comm-cats{grid-template-columns:1fr}}
 
 /* SYSTEM */
-#system{background:var(--bg)}
-.system-wrap{max-width:1200px;margin:0 auto;padding:120px 40px}
-.sys-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:44px}
-.sys-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:28px;display:flex;gap:18px;align-items:flex-start}
-.sys-icon{width:46px;height:46px;flex-shrink:0;background:rgba(201,169,110,.1);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px}
-.sys-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
-.sys-desc{font-size:13px;color:var(--gray1);line-height:1.75}
-.provided-img{margin-top:48px;border-radius:8px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.1)}
-.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
-.tag{background:rgba(201,169,110,.1);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:13px;color:var(--gray1)}
+.sys-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:44px}
+.sys-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px;display:flex;gap:16px;align-items:flex-start}
+.sys-icon{width:46px;height:46px;flex-shrink:0;background:var(--navy);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.sys-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.sys-desc{font-size:13px;font-weight:400;color:var(--text-dim);line-height:1.75}
+.provided-art{margin-bottom:22px}
+.provided-art img{box-shadow:0 10px 40px rgba(0,0,0,.1)}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{background:var(--bg2);border:1px solid var(--line);padding:7px 14px;border-radius:20px;font-size:13px;font-weight:400;color:var(--navy)}
+@media(max-width:700px){.sys-grid{grid-template-columns:1fr}}
 
 /* FLOORPLANS */
 #floorplans{background:var(--bg2)}
-.fp-wrap{max-width:1200px;margin:0 auto;padding:120px 40px}
-.fp-tabs{display:flex;gap:2px;flex-wrap:wrap;margin:36px 0 0;border-bottom:1px solid var(--border)}
-.fp-tab{padding:11px 22px;font-size:13px;font-weight:600;color:var(--gray2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s}
-.fp-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
-.fp-panel{display:none;margin-top:28px}
-.fp-panel.active{display:block}
-.fp-badge{display:inline-block;background:var(--gold);color:var(--bg);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.1em;margin-bottom:14px}
-.fp-img-wrap{border-radius:8px;overflow:hidden;background:rgba(0,0,0,.02);border:1px solid var(--border);text-align:center;padding:36px}
+.fp-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:36px}
+.fp-tab{padding:11px 22px;font-size:13px;font-weight:700;color:var(--text-dim);background:#fff;border:1px solid var(--line);border-radius:20px;cursor:pointer;transition:all .2s}
+.fp-tab.active{color:#fff;background:var(--navy);border-color:var(--navy)}
+.fp-panel{display:none}
+.fp-panel.active{display:block;background:#fff;border:1px solid var(--line);border-radius:16px;padding:36px}
+.fp-badge{display:inline-block;background:var(--gold);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;padding:5px 12px;border-radius:20px;margin-bottom:16px}
+.fp-img-wrap{border-radius:8px;overflow:hidden;background:var(--bg2);text-align:center;padding:36px}
 .fp-img-wrap img{max-height:580px;margin:0 auto}
 
 /* CONTACT */
-#contact{background:var(--bg)}
-.contact-inner{max-width:640px;margin:0 auto;padding:120px 40px;text-align:center}
-.contact-title{font-family:'Pretendard',sans-serif;font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-bottom:12px}
-.contact-sub{font-size:15px;color:var(--gray1);margin-bottom:44px}
-.c-form{background:#fafafa;border:1px solid rgba(0,0,0,.1);border-radius:12px;padding:36px;text-align:left}
-.c-input,.c-select{display:block;width:100%;background:#ffffff;border:1px solid rgba(0,0,0,.15);border-radius:6px;padding:13px 15px;color:var(--text);font-size:14px;margin-bottom:12px;font-family:'Pretendard',sans-serif;transition:border-color .2s}
-.c-input:focus,.c-select:focus{outline:none;border-color:var(--gold)}
-.c-select option{background:#fff;color:#1a1a2e}
-.c-agree{display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;font-size:13px;color:var(--gray1)}
-.c-agree input[type="checkbox"]{width:16px;height:16px;flex-shrink:0;accent-color:var(--gold);margin-top:2px}
-.c-submit{width:100%;padding:16px;background:var(--gold);color:var(--bg);border:none;border-radius:6px;font-size:15px;font-weight:700;font-family:'Pretendard',sans-serif;cursor:pointer;letter-spacing:.05em;transition:background .2s}
-.c-submit:hover{background:var(--gold-light)}
-.c-note{font-size:12px;color:var(--gray2);text-align:center;margin-top:12px}
-.contact-tel-label{font-size:11px;letter-spacing:.15em;color:var(--gray2);margin-top:38px;margin-bottom:6px}
-.contact-tel{display:block;font-family:'Pretendard',sans-serif;font-size:32px;color:var(--gold);font-weight:800;letter-spacing:.03em;text-align:center}
+#contact{padding:100px 0}
+.contact-inner{max-width:640px;margin:0 auto;text-align:center}
+.contact-title{font-size:clamp(26px,3.5vw,40px);font-weight:800;color:var(--navy);margin-bottom:12px}
+.contact-sub{font-size:15px;font-weight:400;color:var(--text-dim);margin-bottom:44px}
+.c-form{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:36px;text-align:left;margin-top:0}
+.c-input,.c-select{display:block;width:100%;background:#fff;border:1px solid var(--line);border-radius:8px;padding:13px 15px;color:var(--text);font-size:14px;font-weight:400;margin-bottom:12px;font-family:'NanumSquare',sans-serif;transition:border-color .2s}
+.c-input:focus,.c-select:focus{outline:none;border-color:var(--navy)}
+.c-agree{display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;font-size:13px;font-weight:400;color:var(--text-dim)}
+.c-agree input{width:16px;height:16px;flex-shrink:0;accent-color:var(--navy);margin-top:2px}
+.c-submit{width:100%;padding:16px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:'NanumSquare',sans-serif;transition:background .2s}
+.c-submit:hover{background:var(--navy2)}
+.c-note{font-size:12px;font-weight:400;color:var(--text-dim);text-align:center;margin-top:12px}
+.contact-tel-label{font-size:11px;font-weight:400;letter-spacing:.15em;color:var(--text-dim);margin-top:38px;margin-bottom:6px}
+.contact-tel{display:block;font-size:32px;color:var(--navy);font-weight:800;letter-spacing:.03em;text-align:center}
 
 /* FOOTER */
-footer{background:#f0f1f4;border-top:1px solid rgba(201,169,110,0.2);padding:48px 40px 100px;text-align:center}
+footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 40px 100px;text-align:center}
 .footer-inner{max-width:1000px;margin:0 auto}
-.footer-logo{font-family:'Pretendard',sans-serif;font-size:18px;font-weight:700;color:var(--gold);margin-bottom:6px}
-.footer-tel{font-size:24px;font-family:'Pretendard',sans-serif;color:var(--text);font-weight:700;margin-bottom:18px}
+.footer-logo{font-size:18px;font-weight:700;color:var(--gold);margin-bottom:6px}
+.footer-tel{font-size:24px;color:#fff;font-weight:700;margin-bottom:18px}
 .footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:22px;flex-wrap:wrap}
-.footer-link{font-size:12px;color:var(--gray2);transition:color .2s}
+.footer-link{font-size:12px;font-weight:400;transition:color .2s}
 .footer-link:hover{color:var(--gold)}
-.footer-notice{font-size:12px;color:var(--gray2);line-height:1.9;max-width:680px;margin:0 auto}
-.footer-copy{font-size:11px;color:rgba(26,26,46,.35);margin-top:22px}
-.footer-biz{font-size:9px;color:rgba(26,26,46,.3);margin-top:8px}
+.footer-notice{font-size:12px;font-weight:400;line-height:1.9;max-width:680px;margin:0 auto;color:rgba(255,255,255,.55)}
+.footer-copy{font-size:11px;font-weight:400;color:rgba(255,255,255,.35);margin-top:22px}
+.footer-biz{font-size:9px;font-weight:400;color:rgba(255,255,255,.3);margin-top:8px}
 
-/* LEFT FLOATING CTA */
+/* FLOATING CTA */
 .left-cta{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:98;display:flex;flex-direction:column;opacity:1;visibility:visible;transition:opacity .4s,visibility .4s}
 .left-cta.hide{opacity:0;visibility:hidden;pointer-events:none}
-.lc-call,.lc-req{writing-mode:vertical-rl;text-orientation:mixed;padding:18px 11px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none;transition:opacity .2s}
-.lc-call{background:rgba(255,255,255,.96);backdrop-filter:blur(12px);color:var(--gold);border:1px solid var(--border);border-left:none;border-radius:0 8px 0 0;box-shadow:3px 0 16px rgba(0,0,0,.1)}
-.lc-call:hover{color:var(--gold-light)}
-.lc-req{background:var(--gold);color:var(--bg);border-radius:0 0 8px 0;box-shadow:4px 0 20px rgba(201,169,110,.3)}
+.lc-call,.lc-req{writing-mode:vertical-rl;text-orientation:mixed;padding:18px 11px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer}
+.lc-call{background:rgba(255,255,255,.96);backdrop-filter:blur(12px);color:var(--navy);border:1px solid var(--line);border-left:none;border-radius:0 8px 0 0;box-shadow:3px 0 16px rgba(0,0,0,.1)}
+.lc-call:hover{color:var(--gold-dark)}
+.lc-req{background:var(--navy);color:var(--gold);border-radius:0 0 8px 0;box-shadow:4px 0 20px rgba(19,34,66,.3)}
 .lc-req:hover{opacity:.9}
 @media(max-width:600px){.left-cta{display:none}}
 
-/* STICKY CTA */
 .sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:99;display:flex;transform:translateY(100%);transition:transform .45s cubic-bezier(.16,1,.3,1)}
 .sticky-cta.show{transform:translateY(0)}
-.s-call{flex:1;text-align:center;padding:17px;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);color:var(--gold);font-weight:700;font-size:14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;transition:color .2s;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
-.s-call:hover{color:var(--gold-light)}
-.s-req{flex:1;text-align:center;padding:17px;background:var(--gold);color:var(--bg);font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 -4px 20px rgba(201,169,110,.3);transition:opacity .2s}
-.s-req:hover{opacity:.9}
+.s-call{flex:1;text-align:center;padding:17px;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);color:var(--navy);font-weight:700;font-size:14px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+.s-req{flex:1;text-align:center;padding:17px;background:var(--navy);color:var(--gold);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px}
 
-/* FADE */
 .fade-up{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s}
 .fade-up.visible{opacity:1;transform:translateY(0)}
 
-/* RESPONSIVE */
 @media(max-width:900px){
-  #gnb{padding:0 20px}
-  .gnb-nav{display:none}
+  .wrap{padding:0 24px}
+  #gnb{padding:0 24px}
   .hero-content{padding:0 24px 60px}
-  .overview-grid{grid-template-columns:1fr;gap:40px;padding:80px 24px}
-  .location-grid{grid-template-columns:1fr;gap:40px;padding:80px 24px}
-  .premium-grid{grid-template-columns:1fr 1fr}
-  .premium-wrap,.design-wrap,.community-wrap,.system-wrap,.fp-wrap{padding:80px 24px}
-  .contact-inner{padding:80px 24px}
-  .comm-cats,.sys-grid{grid-template-columns:1fr}
-  .design-img-grid,.design-features{grid-template-columns:1fr}
-  .location-features{grid-template-columns:1fr}
-  .benefits-inner{grid-template-columns:1fr 1fr}
+  .overview-grid,.loc-grid,.design-arts{grid-template-columns:1fr;gap:40px}
+  .loc-cards,.design-feats,.comm-cats{grid-template-columns:1fr}
+  .prem-grid{grid-template-columns:1fr 1fr}
+  section{padding:80px 0}
+  .contact-inner{padding:0}
+  .benefits-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:600px){
-  .premium-grid,.benefits-inner,.comm-cats{grid-template-columns:1fr}
+  .prem-grid,.sys-grid{grid-template-columns:1fr}
   .hero-cta{flex-direction:column}
-  .btn-gold,.btn-outline{justify-content:center}
+  .btn-navy,.btn-gold-out{justify-content:center;text-align:center}
 }
 </style>
 </head>
@@ -254,6 +242,8 @@ footer{background:#f0f1f4;border-top:1px solid rgba(201,169,110,0.2);padding:48p
   }catch(e){}
 })();
 </script>
+
+<div class="ubar"><b>자이(XI)</b>의 정점에서 도안을 완성하다</div>
 
 <!-- GNB -->
 <header id="gnb">
@@ -280,74 +270,46 @@ footer{background:#f0f1f4;border-top:1px solid rgba(201,169,110,0.2);padding:48p
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="hero-label fade-up">GS건설 자이 · 도안신도시 · 총 2,293세대</div>
-    <h1 class="hero-title fade-up" style="transition-delay:.1s">
-      대전의 새로운 중심,<br>도안자이 센텀리체
-    </h1>
-    <p class="hero-sub fade-up" style="transition-delay:.2s">
-      도안신도시 2,293세대 자이 대단지 · 선착순 동·호 지정 계약
-    </p>
+    <h1 class="hero-title fade-up" style="transition-delay:.1s">대전의 새로운 중심,<br>도안자이 센텀리체</h1>
+    <p class="hero-sub fade-up" style="transition-delay:.2s">도안신도시 2,293세대 자이 대단지 · 선착순 동·호 지정 계약</p>
     <div class="hero-cta fade-up" style="transition-delay:.3s">
-      <a class="btn-gold" href="#contact">
-        관심고객 등록 / 상담신청
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-      <a class="btn-outline" href="tel:15666427">☎ 전화상담 1566-6427</a>
+      <a class="btn-navy" href="#contact">관심고객 등록 / 상담신청</a>
+      <a class="btn-gold-out" href="tel:15666427">☎ 전화상담 1566-6427</a>
     </div>
   </div>
 </section>
 
-<!-- 특별 계약 혜택 -->
-<div class="benefits-strip">
-  <div class="benefits-inner">
-    <div class="benefit-item">
-      <div class="benefit-num">BENEFIT 01</div>
-      <div class="benefit-title">계약금 1차 1,000만원 정액제</div>
-      <div class="benefit-desc">부담 없는 초기 계약금</div>
-    </div>
-    <div class="benefit-item">
-      <div class="benefit-num">BENEFIT 02</div>
-      <div class="benefit-title">분납 계약금 3회 분납</div>
-      <div class="benefit-desc">계약금 분납으로 자금 부담 최소화</div>
-    </div>
-    <div class="benefit-item">
-      <div class="benefit-num">BENEFIT 03</div>
-      <div class="benefit-title">전매 중도금 납입 전 가능</div>
-      <div class="benefit-desc">중도금 납입 전 전매 허용</div>
-    </div>
-    <div class="benefit-item">
-      <div class="benefit-num">BENEFIT 04</div>
-      <div class="benefit-title">무상 제공품목</div>
-      <div class="benefit-desc">3연동 중문 · 이탈리아산 타일 무상 제공</div>
-    </div>
+<!-- BENEFITS -->
+<div class="benefits">
+  <div class="wrap benefits-grid">
+    <div class="benefit"><div class="benefit-badge">BENEFIT 01</div><div class="benefit-title">계약금 1차 1,000만원 정액제</div><div class="benefit-desc">부담 없는 초기 계약금</div></div>
+    <div class="benefit"><div class="benefit-badge">BENEFIT 02</div><div class="benefit-title">분납 계약금 3회 분납</div><div class="benefit-desc">계약금 분납으로 자금 부담 최소화</div></div>
+    <div class="benefit"><div class="benefit-badge">BENEFIT 03</div><div class="benefit-title">전매 중도금 납입 전 가능</div><div class="benefit-desc">중도금 납입 전 전매 허용</div></div>
+    <div class="benefit"><div class="benefit-badge">BENEFIT 04</div><div class="benefit-title">무상 제공품목</div><div class="benefit-desc">3연동 중문 · 이탈리아산 타일 무상 제공</div></div>
   </div>
 </div>
 
 <!-- 사업개요 -->
 <section id="overview">
-  <div class="overview-grid">
+  <div class="wrap overview-grid">
     <div class="fade-up">
-      <div class="section-eyebrow">OVERVIEW</div>
-      <div class="divider"></div>
-      <h2 class="section-title">사업개요</h2>
-      <p class="section-desc">GS건설이 선보이는 도안신도시 최대 규모 자이(XI) 브랜드 아파트</p>
-      <table class="overview-table">
-        <tr><th>단지명</th><td>도안자이 센텀리체</td></tr>
-        <tr><th>시공</th><td>GS건설 (자이 / XI)</td></tr>
-        <tr><th>위치</th><td>대전광역시 유성구 용계동 일원 (도안신도시)</td></tr>
-        <tr><th>규모</th><td>
-          총 2,293세대 (일반분양 1,780세대)<br>
-          <span style="font-size:18px;font-weight:700;color:var(--gray1)">
-            1단지: 지하2~지상42층 8개동 1,209세대<br>
-            2단지: 지하2~지상39층 10개동 1,084세대
-          </span>
-        </td></tr>
-        <tr><th>전용면적</th><td>84㎡ · 99㎡ · 115㎡ · 134㎡(펜트하우스)</td></tr>
-        <tr><th>입주예정</th><td>1단지 2029년 10월 / 2단지 2029년 12월</td></tr>
-        <tr><th>시행</th><td>HM도안 · HM파트너스</td></tr>
-        <tr><th>신탁</th><td>교보자산신탁</td></tr>
-      </table>
+      <div class="badge-eyebrow">OVERVIEW</div>
+      <h2 class="headline">사업개요</h2>
+      <p class="lede">GS건설이 선보이는 도안신도시 최대 규모 자이(XI) 브랜드 아파트</p>
+      <div class="spec-card">
+        <table class="spec">
+          <tr><th>단지명</th><td>도안자이 센텀리체</td></tr>
+          <tr><th>시공</th><td>GS건설 (자이 / XI)</td></tr>
+          <tr><th>위치</th><td>대전광역시 유성구 용계동 일원 (도안신도시)</td></tr>
+          <tr><th>규모</th><td>총 2,293세대 중 일반분양 1,780세대<small>1단지: 지하2~지상42층 8개동 1,209세대<br>2단지: 지하2~지상39층 10개동 1,084세대</small></td></tr>
+          <tr><th>전용면적</th><td>84㎡ · 99㎡ · 115㎡ · 134㎡(펜트하우스)</td></tr>
+          <tr><th>입주예정</th><td>1단지 2029년 10월 / 2단지 2029년 12월</td></tr>
+          <tr><th>시행</th><td>HM도안 · HM파트너스</td></tr>
+          <tr><th>신탁</th><td>교보자산신탁</td></tr>
+        </table>
+      </div>
     </div>
-    <div class="overview-img fade-up" style="transition-delay:.15s">
+    <div class="overview-art rounded-img fade-up" style="transition-delay:.15s">
       <img src="https://doanxi.littlesealstudio.workers.dev/_astro/overview.CFos00OG_17Vf90.webp" alt="단지 조감도">
     </div>
   </div>
@@ -355,221 +317,106 @@ footer{background:#f0f1f4;border-top:1px solid rgba(201,169,110,0.2);padding:48p
 
 <!-- 입지환경 -->
 <section id="location">
-  <div class="location-grid">
+  <div class="wrap loc-grid">
     <div class="fade-up">
-      <div class="section-eyebrow">LOCATION</div>
-      <div class="divider"></div>
-      <h2 class="section-title">입지환경</h2>
-      <p class="section-desc">교통·교육·생활·자연이 어우러진 최적의 주거 입지</p>
-      <div class="location-features">
-        <div class="loc-card fade-up">
-          <div class="loc-icon">🚊</div>
-          <div class="loc-title">트램 역세권(예정)</div>
-          <div class="loc-desc">대전도시철도 2호선 트램 용계역(예정) 도보권</div>
-        </div>
-        <div class="loc-card fade-up" style="transition-delay:.1s">
-          <div class="loc-icon">🎓</div>
-          <div class="loc-title">트리플 학세권</div>
-          <div class="loc-desc">단지 인근 초·중·고 신설 추진</div>
-        </div>
-        <div class="loc-card fade-up" style="transition-delay:.2s">
-          <div class="loc-icon">🏟️</div>
-          <div class="loc-title">스포츠타운·공원</div>
-          <div class="loc-desc">서남부종합스포츠타운 및 중앙공원 인접·조성 예정</div>
-        </div>
-        <div class="loc-card fade-up" style="transition-delay:.3s">
-          <div class="loc-icon">🛒</div>
-          <div class="loc-title">생활 인프라</div>
-          <div class="loc-desc">롯데마트·홈플러스·백화점·종합병원 등 풍부한 생활편의시설</div>
-        </div>
+      <div class="badge-eyebrow">LOCATION</div>
+      <h2 class="headline">입지환경</h2>
+      <p class="lede">교통·교육·생활·자연이 어우러진 최적의 주거 입지</p>
+      <div class="loc-cards">
+        <div class="loc-card"><div class="loc-icon">🚊</div><div class="loc-title">트램 역세권(예정)</div><div class="loc-desc">대전도시철도 2호선 트램 용계역(예정) 도보권</div></div>
+        <div class="loc-card"><div class="loc-icon">🎓</div><div class="loc-title">트리플 학세권</div><div class="loc-desc">단지 인근 초·중·고 신설 추진</div></div>
+        <div class="loc-card"><div class="loc-icon">🏟️</div><div class="loc-title">스포츠타운·공원</div><div class="loc-desc">서남부종합스포츠타운 및 중앙공원 인접·조성 예정</div></div>
+        <div class="loc-card"><div class="loc-icon">🛒</div><div class="loc-title">생활 인프라</div><div class="loc-desc">롯데마트·홈플러스·백화점·종합병원 등 풍부한 생활편의시설</div></div>
       </div>
     </div>
-    <div class="fade-up" style="transition-delay:.1s">
-      <div style="border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15)">
-        <img src="https://doanxi.littlesealstudio.workers.dev/_astro/location.CM1YmKdv_Z2hqaLO.webp" alt="위치도">
-      </div>
+    <div class="loc-art rounded-img fade-up" style="transition-delay:.1s">
+      <img src="https://doanxi.littlesealstudio.workers.dev/_astro/location.CM1YmKdv_Z2hqaLO.webp" alt="위치도">
     </div>
   </div>
 </section>
 
 <!-- 프리미엄 -->
 <section id="premium">
-  <div class="premium-wrap">
-    <div class="premium-center fade-up">
-      <div class="section-eyebrow">PREMIUM</div>
-      <div class="divider"></div>
-      <h2 class="section-title">6가지 프리미엄</h2>
-      <p style="font-size:21px;font-weight:700;color:var(--gray1)">도안자이 센텀리체만이 제공하는 차별화된 가치</p>
+  <div class="wrap">
+    <div class="prem-center fade-up">
+      <div class="badge-eyebrow">PREMIUM</div>
+      <h2 class="headline">6가지 프리미엄</h2>
+      <p class="lede" style="margin-bottom:0">도안자이 센텀리체만이 제공하는 차별화된 가치</p>
     </div>
-    <div class="premium-grid fade-up" style="transition-delay:.1s">
-      <div class="prem-card">
-        <div class="prem-num">01</div>
-        <div class="prem-title">브랜드 프리미엄</div>
-        <div class="prem-desc">GS건설 자이(XI) 1군 브랜드 아파트로 검증된 품질과 높은 브랜드 가치</div>
-      </div>
-      <div class="prem-card">
-        <div class="prem-num">02</div>
-        <div class="prem-title">역세권 프리미엄</div>
-        <div class="prem-desc">대전도시철도 2호선 트램 용계역(예정) 도보 접근으로 뛰어난 교통 편의성</div>
-      </div>
-      <div class="prem-card">
-        <div class="prem-num">03</div>
-        <div class="prem-title">명품설계 프리미엄</div>
-        <div class="prem-desc">총 2,293세대 대단지의 스케일로 탁월한 단지 계획 및 커뮤니티 시설</div>
-      </div>
-      <div class="prem-card">
-        <div class="prem-num">04</div>
-        <div class="prem-title">교육 프리미엄</div>
-        <div class="prem-desc">단지 인근 초·중·고 신설 추진으로 쾌적한 교육 환경과 트리플 학세권 형성</div>
-      </div>
-      <div class="prem-card">
-        <div class="prem-num">05</div>
-        <div class="prem-title">생활인프라 프리미엄</div>
-        <div class="prem-desc">도안신도시의 풍부한 상업·의료·문화 인프라가 생활의 편리함을 높임</div>
-      </div>
-      <div class="prem-card">
-        <div class="prem-num">06</div>
-        <div class="prem-title">미래가치 프리미엄</div>
-        <div class="prem-desc">도안신도시 후속 개발 및 인프라 확충에 따른 높은 미래 가치 기대</div>
-      </div>
+    <div class="prem-grid fade-up" style="transition-delay:.1s">
+      <div class="prem-card"><div class="prem-num">01</div><div class="prem-title">브랜드 프리미엄</div><div class="prem-desc">GS건설 자이(XI) 1군 브랜드 아파트로 검증된 품질과 높은 브랜드 가치</div></div>
+      <div class="prem-card"><div class="prem-num">02</div><div class="prem-title">역세권 프리미엄</div><div class="prem-desc">대전도시철도 2호선 트램 용계역(예정) 도보 접근으로 뛰어난 교통 편의성</div></div>
+      <div class="prem-card"><div class="prem-num">03</div><div class="prem-title">명품설계 프리미엄</div><div class="prem-desc">총 2,293세대 대단지의 스케일로 탁월한 단지 계획 및 커뮤니티 시설</div></div>
+      <div class="prem-card"><div class="prem-num">04</div><div class="prem-title">교육 프리미엄</div><div class="prem-desc">단지 인근 초·중·고 신설 추진으로 쾌적한 교육 환경과 트리플 학세권 형성</div></div>
+      <div class="prem-card"><div class="prem-num">05</div><div class="prem-title">생활인프라 프리미엄</div><div class="prem-desc">도안신도시의 풍부한 상업·의료·문화 인프라가 생활의 편리함을 높임</div></div>
+      <div class="prem-card"><div class="prem-num">06</div><div class="prem-title">미래가치 프리미엄</div><div class="prem-desc">도안신도시 후속 개발 및 인프라 확충에 따른 높은 미래 가치 기대</div></div>
     </div>
   </div>
 </section>
 
 <!-- 단지설계 -->
 <section id="design">
-  <div class="design-wrap">
+  <div class="wrap">
     <div class="fade-up">
-      <div class="section-eyebrow">DESIGN</div>
-      <div class="divider"></div>
-      <h2 class="section-title">단지설계</h2>
-      <p class="section-desc">거주자의 삶의 질을 높이는 섬세한 설계 철학</p>
+      <div class="badge-eyebrow">DESIGN</div>
+      <h2 class="headline">단지설계</h2>
+      <p class="lede">거주자의 삶의 질을 높이는 섬세한 설계 철학</p>
     </div>
-    <div class="design-img-grid fade-up" style="transition-delay:.1s">
-      <div class="design-img-item">
-        <img src="https://doanxi.littlesealstudio.workers.dev/_astro/site-layout.CuoOjEci_Z2cL5lP.webp" alt="단지 배치도">
-      </div>
-      <div style="display:grid;gap:20px">
-        <div class="design-img-item">
-          <img src="https://doanxi.littlesealstudio.workers.dev/_astro/dong-layout_1.D8XDygJs_aWWEP.webp" alt="동호수 배치도 101~104동">
-        </div>
-        <div class="design-img-item">
-          <img src="https://doanxi.littlesealstudio.workers.dev/_astro/dong-layout_2.CFTbdRAe_ZenQb6.webp" alt="동호수 배치도 105~108동">
-        </div>
+    <div class="design-arts fade-up" style="transition-delay:.1s">
+      <div class="rounded-img"><img src="https://doanxi.littlesealstudio.workers.dev/_astro/site-layout.CuoOjEci_Z2cL5lP.webp" alt="단지 배치도"></div>
+      <div class="stack">
+        <div class="rounded-img"><img src="https://doanxi.littlesealstudio.workers.dev/_astro/dong-layout_1.D8XDygJs_aWWEP.webp" alt="동호수 배치도 101~104동"></div>
+        <div class="rounded-img"><img src="https://doanxi.littlesealstudio.workers.dev/_astro/dong-layout_2.CFTbdRAe_ZenQb6.webp" alt="동호수 배치도 105~108동"></div>
       </div>
     </div>
-    <div class="design-features">
-      <div class="df-card fade-up">
-        <div class="df-title">4Bay 판상형 설계</div>
-        <div class="df-desc">일조량과 통풍을 극대화한 개방감 있는 평면으로 쾌적한 주거 환경 구현</div>
-      </div>
-      <div class="df-card fade-up" style="transition-delay:.1s">
-        <div class="df-title">통경축 단지배치</div>
-        <div class="df-desc">동 간 시야를 확보한 개방적 배치로 자연채광과 조망을 최대한 확보</div>
-      </div>
-      <div class="df-card fade-up" style="transition-delay:.2s">
-        <div class="df-title">특화 외관계획</div>
-        <div class="df-desc">옥탑 경관조명 및 개방형 발코니로 도안신도시의 새로운 랜드마크 역할</div>
-      </div>
+    <div class="design-feats fade-up" style="transition-delay:.15s">
+      <div class="feat"><div class="feat-title">4Bay 판상형 설계</div><div class="feat-desc">일조량과 통풍을 극대화한 개방감 있는 평면으로 쾌적한 주거 환경 구현</div></div>
+      <div class="feat"><div class="feat-title">통경축 단지배치</div><div class="feat-desc">동 간 시야를 확보한 개방적 배치로 자연채광과 조망을 최대한 확보</div></div>
+      <div class="feat"><div class="feat-title">특화 외관계획</div><div class="feat-desc">옥탑 경관조명 및 개방형 발코니로 도안신도시의 새로운 랜드마크 역할</div></div>
     </div>
   </div>
 </section>
 
 <!-- CLUB XIAN 커뮤니티 -->
 <section id="community">
-  <div class="community-wrap">
-    <div class="comm-center fade-up">
-      <div class="section-eyebrow">COMMUNITY</div>
-      <div class="divider"></div>
-      <h2 class="section-title">CLUB XIAN</h2>
-      <p style="font-size:15px;color:var(--gray1)">최상의 커뮤니티 시설로 품격 있는 일상을 선사합니다</p>
+  <div class="wrap">
+    <div class="fade-up">
+      <div class="badge-eyebrow">COMMUNITY</div>
+      <h2 class="headline">CLUB XIAN</h2>
+      <p class="lede" style="margin-bottom:0;font-size:15px;font-weight:400">최상의 커뮤니티 시설로 품격 있는 일상을 선사합니다</p>
     </div>
-    <div class="comm-img fade-up" style="transition-delay:.1s">
+    <div class="comm-art rounded-img fade-up" style="transition-delay:.1s;margin-top:44px">
       <img src="https://doanxi.littlesealstudio.workers.dev/_astro/community.c4SEbQmw_Z1ATFWr.webp" alt="CLUB XIAN 커뮤니티">
     </div>
-    <div class="comm-cats">
-      <div class="comm-cat fade-up">
-        <div class="comm-cat-title">운동 · 웰니스</div>
-        <ul class="comm-list">
-          <li>피트니스센터</li>
-          <li>GX룸</li>
-          <li>필라테스</li>
-          <li>골프연습장</li>
-          <li>스크린골프</li>
-          <li>사우나</li>
-        </ul>
-      </div>
-      <div class="comm-cat fade-up" style="transition-delay:.1s">
-        <div class="comm-cat-title">생활 · 교육</div>
-        <ul class="comm-list">
-          <li>카페테리아</li>
-          <li>PDR (독립업무공간)</li>
-          <li>키즈실</li>
-          <li>독서실</li>
-          <li>작은도서관</li>
-        </ul>
-      </div>
-      <div class="comm-cat fade-up" style="transition-delay:.2s">
-        <div class="comm-cat-title">제휴 서비스</div>
-        <ul class="comm-list">
-          <li>솔닥 원격진료</li>
-          <li>세라젬 척추 의료기기</li>
-        </ul>
-      </div>
+    <div class="comm-cats fade-up" style="transition-delay:.15s">
+      <div class="comm-cat"><div class="comm-cat-title">운동 · 웰니스</div><ul class="comm-list"><li>피트니스센터</li><li>GX룸</li><li>필라테스</li><li>골프연습장</li><li>스크린골프</li><li>사우나</li></ul></div>
+      <div class="comm-cat"><div class="comm-cat-title">생활 · 교육</div><ul class="comm-list"><li>카페테리아</li><li>PDR (독립업무공간)</li><li>키즈실</li><li>독서실</li><li>작은도서관</li></ul></div>
+      <div class="comm-cat"><div class="comm-cat-title">제휴 서비스</div><ul class="comm-list"><li>솔닥 원격진료</li><li>세라젬 척추 의료기기</li></ul></div>
     </div>
   </div>
 </section>
 
 <!-- 시스템 -->
 <section id="system">
-  <div class="system-wrap">
+  <div class="wrap">
     <div class="fade-up">
-      <div class="section-eyebrow">SYSTEM</div>
-      <div class="divider"></div>
-      <h2 class="section-title">차세대 스마트 시스템</h2>
-      <p class="section-desc">최신 기술로 더 편리하고 건강한 주거 환경을 제공합니다</p>
+      <div class="badge-eyebrow">SYSTEM</div>
+      <h2 class="headline">차세대 스마트 시스템</h2>
+      <p class="lede">최신 기술로 더 편리하고 건강한 주거 환경을 제공합니다</p>
     </div>
-    <div class="sys-grid">
-      <div class="sys-card fade-up">
-        <div class="sys-icon">📱</div>
-        <div>
-          <div class="sys-title">스마트 IoT 홈</div>
-          <div class="sys-desc">월패드·스마트폰 연동 홈 컨트롤로 언제 어디서나 내 집을 관리</div>
-        </div>
-      </div>
-      <div class="sys-card fade-up" style="transition-delay:.1s">
-        <div class="sys-icon">💨</div>
-        <div>
-          <div class="sys-title">전열교환 환기시스템</div>
-          <div class="sys-desc">전열교환 + HEPA급 필터로 미세먼지 차단과 실내 공기질 최적화</div>
-        </div>
-      </div>
-      <div class="sys-card fade-up" style="transition-delay:.2s">
-        <div class="sys-icon">⚡</div>
-        <div>
-          <div class="sys-title">스마트 에너지관리</div>
-          <div class="sys-desc">세대 비례제어 난방 시스템으로 에너지 효율 극대화</div>
-        </div>
-      </div>
-      <div class="sys-card fade-up" style="transition-delay:.3s">
-        <div class="sys-icon">🔋</div>
-        <div>
-          <div class="sys-title">EV 충전 인프라</div>
-          <div class="sys-desc">급속·완속 EV 충전설비로 전기차 시대를 완벽하게 대비</div>
-        </div>
-      </div>
+    <div class="sys-grid fade-up" style="transition-delay:.1s">
+      <div class="sys-card"><div class="sys-icon">📱</div><div><div class="sys-title">스마트 IoT 홈</div><div class="sys-desc">월패드·스마트폰 연동 홈 컨트롤로 언제 어디서나 내 집을 관리</div></div></div>
+      <div class="sys-card"><div class="sys-icon">💨</div><div><div class="sys-title">전열교환 환기시스템</div><div class="sys-desc">전열교환 + HEPA급 필터로 미세먼지 차단과 실내 공기질 최적화</div></div></div>
+      <div class="sys-card"><div class="sys-icon">⚡</div><div><div class="sys-title">스마트 에너지관리</div><div class="sys-desc">세대 비례제어 난방 시스템으로 에너지 효율 극대화</div></div></div>
+      <div class="sys-card"><div class="sys-icon">🔋</div><div><div class="sys-title">EV 충전 인프라</div><div class="sys-desc">급속·완속 EV 충전설비로 전기차 시대를 완벽하게 대비</div></div></div>
     </div>
-    <div class="provided-img fade-up" style="transition-delay:.1s">
+    <div class="provided-art rounded-img fade-up" style="transition-delay:.1s">
       <img src="https://doanxi.littlesealstudio.workers.dev/_astro/provided.CBIc1pII_2qdtpd.webp" alt="기본 제공품목">
     </div>
-    <div style="margin-top:20px;padding:22px;background:var(--card);border:1px solid var(--border);border-radius:8px" class="fade-up">
-      <div style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.1em;margin-bottom:12px">기본 제공품목</div>
+    <div style="margin-top:20px;padding:22px;background:#fff;border:1px solid var(--line);border-radius:14px" class="fade-up">
+      <div style="font-size:12px;font-weight:700;color:var(--navy);letter-spacing:.1em;margin-bottom:12px">기본 제공품목</div>
       <div class="tags">
-        <span class="tag">3연동 자동중문</span>
-        <span class="tag">포셀린 타일</span>
-        <span class="tag">시트패널</span>
-        <span class="tag">강마루</span>
-        <span class="tag">엔지니어드스톤 주방상판</span>
+        <span class="tag">3연동 자동중문</span><span class="tag">포셀린 타일</span><span class="tag">시트패널</span><span class="tag">강마루</span><span class="tag">엔지니어드스톤 주방상판</span>
       </div>
     </div>
   </div>
@@ -577,12 +424,11 @@ footer{background:#f0f1f4;border-top:1px solid rgba(201,169,110,0.2);padding:48p
 
 <!-- 평면안내 -->
 <section id="floorplans">
-  <div class="fp-wrap">
+  <div class="wrap">
     <div class="fade-up">
-      <div class="section-eyebrow">FLOOR PLANS</div>
-      <div class="divider"></div>
-      <h2 class="section-title">평면안내</h2>
-      <p class="section-desc">라이프스타일에 맞는 다양한 평형을 선택하세요</p>
+      <div class="badge-eyebrow">FLOOR PLANS</div>
+      <h2 class="headline">평면안내</h2>
+      <p class="lede">라이프스타일에 맞는 다양한 평형을 선택하세요</p>
     </div>
     <div class="fp-tabs" id="fpTabs">
       <div class="fp-tab active" data-tab="84a">84㎡ A</div>
@@ -594,49 +440,36 @@ footer{background:#f0f1f4;border-top:1px solid rgba(201,169,110,0.2);padding:48p
     </div>
     <div class="fp-panel active" id="tab-84a">
       <div class="fp-badge">주력 · 1단지</div>
-      <div class="fp-img-wrap">
-        <img src="https://doanxi.littlesealstudio.workers.dev/_astro/84a.C-Edzn0K_MPdHX.webp" alt="84㎡ A 평면도">
-      </div>
+      <div class="fp-img-wrap"><img src="https://doanxi.littlesealstudio.workers.dev/_astro/84a.C-Edzn0K_MPdHX.webp" alt="84㎡ A 평면도"></div>
     </div>
     <div class="fp-panel" id="tab-84b">
       <div class="fp-badge">주력 · 1단지</div>
-      <div class="fp-img-wrap">
-        <img src="https://doanxi.littlesealstudio.workers.dev/_astro/84b.DL0rMrta_9z93b.webp" alt="84㎡ B 평면도">
-      </div>
+      <div class="fp-img-wrap"><img src="https://doanxi.littlesealstudio.workers.dev/_astro/84b.DL0rMrta_9z93b.webp" alt="84㎡ B 평면도"></div>
     </div>
     <div class="fp-panel" id="tab-84c">
       <div class="fp-badge">1단지</div>
-      <div class="fp-img-wrap">
-        <img src="https://doanxi.littlesealstudio.workers.dev/_astro/84c.DDTsXb8w_Z1joh4X.webp" alt="84㎡ C 평면도">
-      </div>
+      <div class="fp-img-wrap"><img src="https://doanxi.littlesealstudio.workers.dev/_astro/84c.DDTsXb8w_Z1joh4X.webp" alt="84㎡ C 평면도"></div>
     </div>
     <div class="fp-panel" id="tab-99a">
       <div class="fp-badge">1단지</div>
-      <div class="fp-img-wrap">
-        <img src="https://doanxi.littlesealstudio.workers.dev/_astro/99a.D_PuJ_xf_Z1Bz7YR.webp" alt="99㎡ A 평면도">
-      </div>
+      <div class="fp-img-wrap"><img src="https://doanxi.littlesealstudio.workers.dev/_astro/99a.D_PuJ_xf_Z1Bz7YR.webp" alt="99㎡ A 평면도"></div>
     </div>
     <div class="fp-panel" id="tab-115b">
       <div class="fp-badge">2단지</div>
-      <div class="fp-img-wrap">
-        <img src="https://doanxi.littlesealstudio.workers.dev/_astro/115b.CwKMAjiH_Z1R0cMO.webp" alt="115㎡ B 평면도">
-      </div>
+      <div class="fp-img-wrap"><img src="https://doanxi.littlesealstudio.workers.dev/_astro/115b.CwKMAjiH_Z1R0cMO.webp" alt="115㎡ B 평면도"></div>
     </div>
     <div class="fp-panel" id="tab-134p">
       <div class="fp-badge">2단지 · 펜트하우스</div>
-      <div class="fp-img-wrap">
-        <img src="https://doanxi.littlesealstudio.workers.dev/_astro/134p.DGmRvE7N_ZLQWmQ.webp" alt="134㎡ PH 펜트하우스 평면도">
-      </div>
+      <div class="fp-img-wrap"><img src="https://doanxi.littlesealstudio.workers.dev/_astro/134p.DGmRvE7N_ZLQWmQ.webp" alt="134㎡ PH 펜트하우스 평면도"></div>
     </div>
   </div>
 </section>
 
 <!-- 상담신청 -->
 <section id="contact">
-  <div class="contact-inner">
+  <div class="wrap contact-inner">
     <div class="fade-up">
-      <div class="section-eyebrow">CONSULTATION</div>
-      <div class="divider" style="margin:14px auto 22px"></div>
+      <div class="badge-eyebrow" style="margin-left:auto;margin-right:auto">CONSULTATION</div>
       <h2 class="contact-title">관심고객 등록 /<br>상담신청</h2>
       <p class="contact-sub">전담 상담원이 빠르게 연락드립니다</p>
     </div>
@@ -645,21 +478,14 @@ footer{background:#f0f1f4;border-top:1px solid rgba(201,169,110,0.2);padding:48p
       <input class="c-input" type="tel" name="phone" placeholder="연락처 (010-0000-0000)" required>
       <select class="c-select" name="size">
         <option value="">관심 평형 선택</option>
-        <option>84㎡</option>
-        <option>99㎡</option>
-        <option>115㎡</option>
-        <option>134㎡ 펜트하우스</option>
-        <option>상담 후 결정</option>
+        <option>84㎡</option><option>99㎡</option><option>115㎡</option><option>134㎡ 펜트하우스</option><option>상담 후 결정</option>
       </select>
-      <div class="c-agree">
-        <input type="checkbox" id="ag" required>
-        <label for="ag">개인정보 수집·이용에 동의합니다 (필수) — 수집된 개인정보(성함·연락처)는 분양 상담 목적에 한해 이용됩니다.</label>
-      </div>
+      <div class="c-agree"><input type="checkbox" id="ag" required><label for="ag">개인정보 수집·이용에 동의합니다 (필수) — 수집된 개인정보(성함·연락처)는 분양 상담 목적에 한해 이용됩니다.</label></div>
       <button class="c-submit" id="submitBtn" type="submit">상담 신청하기</button>
       <p class="c-note" id="formNote">부담 없이 먼저 여쭤보세요</p>
     </form>
     <div class="contact-tel-label fade-up" style="margin-top:38px">전화 상담</div>
-    <a class="contact-tel fade-up" href="tel:15666427" style="transition-delay:.05s">1566-6427</a>
+    <a class="contact-tel fade-up" href="tel:15666427">1566-6427</a>
   </div>
 </section>
 
@@ -709,31 +535,23 @@ footer{background:#f0f1f4;border-top:1px solid rgba(201,169,110,0.2);padding:48p
 </div>
 
 <script>
-const obs = new IntersectionObserver(es => {
-  es.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible') });
-}, {threshold: 0.1});
+const obs = new IntersectionObserver(es => { es.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible') }) }, {threshold:.1});
 document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
-
-document.querySelectorAll('.hero .fade-up').forEach(el => {
-  const d = parseFloat(el.style.transitionDelay || 0) * 1000;
-  setTimeout(() => el.classList.add('visible'), 100 + d);
-});
+document.querySelectorAll('.hero .fade-up').forEach(el => { const d = parseFloat(el.style.transitionDelay||0)*1000; setTimeout(()=>el.classList.add('visible'), 100+d); });
 
 document.getElementById('fpTabs').addEventListener('click', e => {
-  const tab = e.target.closest('.fp-tab');
-  if (!tab) return;
-  document.querySelectorAll('.fp-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.fp-panel').forEach(p => p.classList.remove('active'));
+  const tab = e.target.closest('.fp-tab'); if(!tab) return;
+  document.querySelectorAll('.fp-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.fp-panel').forEach(p=>p.classList.remove('active'));
   tab.classList.add('active');
-  document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
 });
 
 window.addEventListener('scroll', () => {
   const y = window.scrollY;
-  document.getElementById('gnb').classList.toggle('scrolled', y > 40);
-  document.getElementById('sticky').classList.toggle('show', y > 500);
-  document.getElementById('leftCta').classList.toggle('hide', y > 500);
-}, {passive: true});
+  document.getElementById('sticky').classList.toggle('show', y>500);
+  document.getElementById('leftCta').classList.toggle('hide', y>500);
+}, {passive:true});
 
 async function submitForm(e) {
   e.preventDefault();
@@ -751,7 +569,7 @@ async function submitForm(e) {
     });
     if (res.ok) {
       form.style.display = 'none';
-      note.style.cssText = 'text-align:center;font-size:14px;color:var(--gold);margin-top:16px;font-weight:700;';
+      note.style.cssText = 'text-align:center;font-size:14px;color:var(--navy);margin-top:16px;font-weight:700;';
       note.textContent = '✓ 신청이 완료되었습니다! 전담 상담원이 곧 연락드립니다.';
       gtag('event', 'conversion', {'send_to': 'AW-18367927968/NJv6CLatxd0cEKCtwbZE'});
     } else {
