@@ -1,10 +1,11 @@
 // 방문자 접속 로그 기록용 Vercel Serverless Function
 // GET /api/log?page=/foo → 구글 시트(Apps Script 웹앱)로 IP·시간·유입경로·페이지·중복접속여부를 전달
 
-// 같은 IP가 이 시간(ms) 내에 다시 접속하면 "중복(부정의심) 접속"으로 표시
+// 같은 IP가 최초 접속 후 이 기간(초) 내에 다시 접속하면 "중복(부정의심) 접속"으로 표시
+// middleware.js의 실제 차단 기준과 동일한 24시간으로 맞춰, 시트에 찍히는 Y/N이 차단 여부와 일치하게 한다.
 // Vercel Storage(Upstash) 연동이 없으면 항상 false를 반환하므로,
 // 연동 전에도 기존 로그 기능은 그대로 동작한다.
-const DUPLICATE_WINDOW_MS = 180000;
+const COOLDOWN_SECONDS = 86400;
 
 async function checkDuplicateVisit(ip) {
   // Vercel Storage 마켓플레이스로 연결하면 KV_REST_API_* 이름으로 주입됨
@@ -18,15 +19,11 @@ async function checkDuplicateVisit(ip) {
     const key = `visit:${ip}`;
     const now = Date.now();
 
-    const getRes = await fetch(`${redisUrl}/get/${key}`, { headers });
-    const getData = await getRes.json();
-    const lastSeen = getData.result ? Number(getData.result) : null;
-    const isDuplicate = lastSeen !== null && (now - lastSeen) < DUPLICATE_WINDOW_MS;
+    // SET key value EX 초 NX → 키가 없을 때만 세팅됨(최초 접속), 이미 있으면 세팅 안 되고 result가 null(재접속)
+    const setRes = await fetch(`${redisUrl}/set/${key}/${now}/EX/${COOLDOWN_SECONDS}/NX`, { headers });
+    const setData = await setRes.json();
 
-    // 마지막 접속 시각 갱신 (240초 후 자동 만료되어 저장공간이 계속 쌓이지 않음)
-    fetch(`${redisUrl}/set/${key}/${now}/EX/240`, { headers }).catch(() => {});
-
-    return isDuplicate;
+    return setData.result === null;
   } catch {
     return false;
   }
