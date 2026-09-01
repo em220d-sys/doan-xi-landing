@@ -6,7 +6,7 @@ export const config = {
   matcher: ['/', '/index.html', '/price-calculator', '/price-calculator/', '/price-calculator/index.html'],
 };
 
-const WINDOW_MS = 2000; // 같은 IP+브라우저가 이 시간(2초) 내 재요청하면 차단
+const WINDOW_MS = 30000; // 같은 IP+브라우저가 이 시간(30초) 내 재요청하면 차단
 
 export default async function middleware(req) {
   const redisUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -26,8 +26,8 @@ export default async function middleware(req) {
     const getData = await getRes.json();
     const lastSeen = getData.result ? Number(getData.result) : null;
 
-    // 마지막 접속 시각 갱신 (30초 후 자동 만료)
-    fetch(`${redisUrl}/set/${encodeURIComponent(key)}/${now}/EX/30`, { headers: authHeaders }).catch(() => {});
+    // 마지막 접속 시각 갱신 (60초 후 자동 만료, 차단 기준보다 여유있게)
+    fetch(`${redisUrl}/set/${encodeURIComponent(key)}/${now}/EX/60`, { headers: authHeaders }).catch(() => {});
 
     if (lastSeen !== null && (now - lastSeen) < WINDOW_MS) {
       const sheetUrl = process.env.SHEET_WEBHOOK_URL;

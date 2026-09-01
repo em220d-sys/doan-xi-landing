@@ -4,7 +4,7 @@
 // 같은 IP가 이 시간(ms) 내에 다시 접속하면 "중복(부정의심) 접속"으로 표시
 // Vercel Storage(Upstash) 연동이 없으면 항상 false를 반환하므로,
 // 연동 전에도 기존 로그 기능은 그대로 동작한다.
-const DUPLICATE_WINDOW_MS = 3000;
+const DUPLICATE_WINDOW_MS = 30000;
 
 async function checkDuplicateVisit(ip) {
   // Vercel Storage 마켓플레이스로 연결하면 KV_REST_API_* 이름으로 주입됨
@@ -23,8 +23,8 @@ async function checkDuplicateVisit(ip) {
     const lastSeen = getData.result ? Number(getData.result) : null;
     const isDuplicate = lastSeen !== null && (now - lastSeen) < DUPLICATE_WINDOW_MS;
 
-    // 마지막 접속 시각 갱신 (30초 후 자동 만료되어 저장공간이 계속 쌓이지 않음)
-    fetch(`${redisUrl}/set/${key}/${now}/EX/30`, { headers }).catch(() => {});
+    // 마지막 접속 시각 갱신 (60초 후 자동 만료되어 저장공간이 계속 쌓이지 않음)
+    fetch(`${redisUrl}/set/${key}/${now}/EX/60`, { headers }).catch(() => {});
 
     return isDuplicate;
   } catch {
