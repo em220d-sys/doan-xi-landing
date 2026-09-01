@@ -6,7 +6,7 @@ export const config = {
   matcher: ['/', '/index.html', '/price-calculator', '/price-calculator/', '/price-calculator/index.html'],
 };
 
-const WINDOW_MS = 30000; // 같은 IP+브라우저가 이 시간(30초) 내 재요청하면 차단
+const WINDOW_MS = 180000; // 같은 IP+브라우저가 이 시간(3분) 내 재요청하면 차단
 
 export default async function middleware(req) {
   const redisUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -26,8 +26,8 @@ export default async function middleware(req) {
     const getData = await getRes.json();
     const lastSeen = getData.result ? Number(getData.result) : null;
 
-    // 마지막 접속 시각 갱신 (60초 후 자동 만료, 차단 기준보다 여유있게)
-    fetch(`${redisUrl}/set/${encodeURIComponent(key)}/${now}/EX/60`, { headers: authHeaders }).catch(() => {});
+    // 마지막 접속 시각 갱신 (240초 후 자동 만료, 차단 기준보다 여유있게)
+    fetch(`${redisUrl}/set/${encodeURIComponent(key)}/${now}/EX/240`, { headers: authHeaders }).catch(() => {});
 
     if (lastSeen !== null && (now - lastSeen) < WINDOW_MS) {
       const sheetUrl = process.env.SHEET_WEBHOOK_URL;
@@ -48,7 +48,7 @@ export default async function middleware(req) {
           '<meta name="viewport" content="width=device-width,initial-scale=1">' +
           '<meta name="robots" content="noindex"><title>잠시만요</title></head>' +
           '<body style="font-family:-apple-system,sans-serif;text-align:center;padding:100px 24px;color:#333">' +
-          '<p style="font-size:16px">짧은 시간 내 반복 접속이 감지되어 잠시 제한됩니다.<br>몇 초 후 다시 시도해주세요.</p>' +
+          '<p style="font-size:16px">짧은 시간 내 반복 접속이 감지되어 잠시 제한됩니다.<br>잠시 후 다시 시도해주세요.</p>' +
           '</body></html>',
         { status: 429, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
       );
