@@ -1,12 +1,13 @@
-// 동일 IP+브라우저의 최초 접속만 통과시키고, 이후 재접속은 일정 기간 차단하는 Edge Middleware
-// Vercel Storage(Upstash Redis)에 "이미 방문했는지" 여부를 기록해 판단한다.
+// 동일 IP+브라우저가 일정 기간 내 허용 횟수(MAX_VISITS)까지만 통과시키고, 그다음 접속부터 차단하는 Edge Middleware
+// Vercel Storage(Upstash Redis)에 "기간 내 방문 횟수"를 기록해 판단한다.
 // KV_REST_API_URL / KV_REST_API_TOKEN 연동이 없으면 항상 통과시켜, 사이트 접속 자체는 절대 막히지 않는다.
 
 export const config = {
   matcher: ['/', '/index.html', '/price-calculator', '/price-calculator/', '/price-calculator/index.html'],
 };
 
-const COOLDOWN_SECONDS = 86400; // 최초 접속 후 이 기간(24시간) 동안 동일 IP+브라우저 재접속 차단
+const COOLDOWN_SECONDS = 86400; // 최초 접속 후 이 기간(24시간) 동안 방문 횟수를 센다
+const MAX_VISITS = 2; // 기간 내 이 횟수까지는 통과, 그다음(3회째) 접속부터 차단
 
 export default async function middleware(req) {
   const redisUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -18,19 +19,25 @@ export default async function middleware(req) {
   if (!ip) return;
 
   const key = `gate:${ip}:${ua}`;
-  const now = Date.now();
   const authHeaders = { Authorization: `Bearer ${redisToken}` };
 
   try {
-    // SET key value EX 초 NX → 키가 없을 때만 세팅됨(최초 접속: "OK"), 이미 있으면 세팅 안 되고 result가 null(재접속: 차단)
-    const setRes = await fetch(
-      `${redisUrl}/set/${encodeURIComponent(key)}/${now}/EX/${COOLDOWN_SECONDS}/NX`,
-      { headers: authHeaders }
-    );
-    const setData = await setRes.json();
-    const isRepeatVisit = setData.result === null;
+    // MULTI/EXEC(원자적 실행): SET key 0 EX 초 NX → 키가 없을 때만 0으로 만들고 만료시간 설정(이미 있으면 그대로 둠),
+    // INCR key → 방문 횟수 +1 (만료시간은 유지되므로 최초 접속 시점부터 24시간 고정 창)
+    const res = await fetch(`${redisUrl}/multi-exec`, {
+      method: 'POST',
+      headers: { ...authHeaders, 'Content-Type': 'application/json' },
+      body: JSON.stringify([
+        ['SET', key, '0', 'EX', String(COOLDOWN_SECONDS), 'NX'],
+        ['INCR', key],
+      ]),
+    });
+    const data = await res.json();
+    const visitCount = Number(data?.[1]?.result);
+    if (!Number.isFinite(visitCount)) return; // 응답 형식이 예상과 다르면 차단하지 않고 통과
+    const isBlocked = visitCount > MAX_VISITS;
 
-    if (isRepeatVisit) {
+    if (isBlocked) {
       const sheetUrl = process.env.SHEET_WEBHOOK_URL;
       if (sheetUrl) {
         const params = new URLSearchParams({
