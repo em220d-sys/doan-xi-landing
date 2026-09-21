@@ -9,13 +9,7 @@ export const config = {
 const COOLDOWN_SECONDS = 86400; // 최초 접속 후 이 기간(24시간) 동안 방문 횟수를 센다
 const MAX_VISITS = 2; // 기간 내 이 횟수까지는 통과, 그다음(3회째) 접속부터 차단
 
-// 이 시각 이전에는 차단·집계를 모두 건너뛰고 전부 통과시킨다 (구글 애즈 심사/재개를 위한 임시 해제).
-// 이 시각이 지나면 별도 배포 없이 자동으로 차단이 다시 시작된다.
-const BLOCK_START_MS = Date.parse('2026-09-22T09:00:00+09:00');
-
 export default async function middleware(req) {
-  if (Date.now() < BLOCK_START_MS) return;
-
   const redisUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
   const redisToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!redisUrl || !redisToken) return;
@@ -24,7 +18,7 @@ export default async function middleware(req) {
   const ua = req.headers.get('user-agent') || '';
   if (!ip) return;
 
-  // 키 접두사를 바꿔(gate2) 해제 이전에 쌓인 방문 기록은 버리고, 재개 시점부터 새로 센다
+  // 임시 해제 이전(gate:)에 쌓인 방문 기록은 버리고, 차단 재개 시점부터 새로 센다
   const key = `gate2:${ip}:${ua}`;
   const authHeaders = { Authorization: `Bearer ${redisToken}` };
 
