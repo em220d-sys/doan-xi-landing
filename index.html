@@ -569,14 +569,22 @@ async function submitForm(e) {
   const form = document.getElementById('consultForm');
   btn.disabled = true;
   btn.textContent = '전송 중...';
-  const data = new FormData(form);
+  const fd = new FormData(form);
+  const payload = {
+    name: fd.get('name') || '',
+    phone: fd.get('phone') || '',
+    size: fd.get('size') || '',
+    agree: document.getElementById('ag').checked,
+    source: location.hostname,
+  };
   try {
-    const res = await fetch('https://formspree.io/f/maqzkwlq', {
+    const res = await fetch('/api/consult', {
       method: 'POST',
-      body: data,
-      headers: { 'Accept': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
-    if (res.ok) {
+    const result = await res.json().catch(() => ({}));
+    if (res.ok && result.ok) {
       form.style.display = 'none';
       note.style.cssText = 'text-align:center;font-size:14px;color:var(--navy);margin-top:16px;font-weight:700;';
       note.textContent = '✓ 신청이 완료되었습니다! 전담 상담원이 곧 연락드립니다.';
