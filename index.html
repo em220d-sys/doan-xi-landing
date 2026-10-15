@@ -69,13 +69,13 @@ img{max-width:100%;height:auto;display:block}
 }
 
 /* HERO */
-.hero{position:relative;height:100svh;min-height:600px;display:flex;align-items:flex-end;overflow:hidden}
+.hero{position:relative;height:clamp(440px, 72vh, 600px);min-height:440px;display:flex;align-items:flex-end;overflow:hidden}
 .hero-bg{position:absolute;inset:0;background:#0c1526}
-.hero-bg img{width:100%;height:100%;object-fit:cover;opacity:.8}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 60%;opacity:.8}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,20,40,.94) 0%,rgba(11,20,40,.25) 55%,rgba(11,20,40,.45) 100%)}
 .hero-content{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto;padding:0 40px 90px}
 .hero-title{font-size:clamp(36px,5.5vw,68px);font-weight:800;line-height:1.15;margin-bottom:14px;color:#ffffff}
-.hero-sub{font-size:clamp(16px,1.8vw,20px);font-weight:400;color:rgba(255,255,255,.82);margin-bottom:38px;letter-spacing:.02em}
+.hero-sub{font-size:clamp(16px,1.8vw,20px);font-weight:700;color:rgba(255,255,255,.82);margin-top:-4px;margin-bottom:38px;letter-spacing:.02em}
 .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
 .btn-navy{background:var(--gold);color:var(--navy);padding:15px 32px;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:.02em;transition:background .2s}
 .btn-navy:hover{background:#dab876}
@@ -275,7 +275,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 40px 100px
 <!-- HERO -->
 <section class="hero">
   <div class="hero-bg">
-    <img src="https://doanxi.littlesealstudio.workers.dev/_astro/hero-1-pc.BGUfJLZz_Z1pN6v1.webp" alt="도안자이 센텀리체">
+    <img src="images/hero-1-pc-clean.jpg" alt="도안자이 센텀리체">
   </div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
