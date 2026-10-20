@@ -62,7 +62,7 @@
 body{
   background:var(--bg);color:var(--text);
   font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
-  line-height:1.6;padding-bottom:112px;font-variant-numeric:tabular-nums;
+  line-height:1.6;padding-bottom:140px;font-variant-numeric:tabular-nums;
 }
 button{font-family:inherit}
 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -146,6 +146,35 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .summary-total .raw{font-size:12px;font-weight:500;color:var(--bar-text-dim)}
 .btn-generate{flex-shrink:0;background:var(--bar-accent);color:var(--ink);border:none;padding:13px 20px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:.02em;white-space:nowrap}
 .btn-generate:hover{filter:brightness(1.08)}
+.summary-extra{font-size:11.5px;color:var(--bar-text-dim);margin-top:2px}
+.summary-extra b{color:var(--bar-text);font-weight:700}
+
+/* STEP 7·8 : 취득세 / 중도금 이자 */
+.step.open .step-body.tall{max-height:1200px}
+.calc-label{padding:4px 18px 8px;font-size:12.5px;font-weight:700;color:var(--text-muted)}
+.calc-label small{font-weight:500;color:var(--text-faint)}
+.calc-box{margin:0 18px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px 14px}
+.calc-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;font-size:13px;color:var(--text-muted)}
+.calc-row + .calc-row{border-top:1px dashed var(--border)}
+.calc-row b{color:var(--text);font-weight:700;text-align:right}
+.calc-row.sub{padding-left:10px;font-size:12px}
+.calc-row.total{font-size:14px;color:var(--text);font-weight:700}
+.calc-row.total b{color:var(--accent);font-size:16px;font-weight:800}
+.calc-notes{padding:0 18px 16px;font-size:11.5px;color:var(--text-faint);line-height:1.55}
+.calc-notes li{margin-left:14px}
+.field-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 18px}
+.field-row label{font-size:13px;font-weight:700;color:var(--text-muted)}
+.field-row input{font-family:inherit;font-size:14px;font-weight:700;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+.field-row input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.rate-wrap{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700}
+.rate-wrap input{width:80px;text-align:right}
+.sched{margin:8px 18px 12px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.sched-row{display:grid;grid-template-columns:44px 1fr auto auto;align-items:center;gap:8px;padding:7px 10px;font-size:12.5px}
+.sched-row + .sched-row{border-top:1px solid var(--border)}
+.sched-row.head{background:var(--accent-tint);font-size:11.5px;font-weight:700;color:var(--text-muted)}
+.sched-row input{font-family:inherit;font-size:12.5px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 6px;min-width:0;width:100%}
+.sched-row .amt{color:var(--text-muted);text-align:right;min-width:62px}
+.sched-row .int{font-weight:700;text-align:right;min-width:58px}
 
 </style>
 </head>
@@ -249,6 +278,56 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       </div>
     </div>
   </section>
+
+  <!-- STEP 7 : 취득세 -->
+  <section class="step disabled" id="stepTax">
+    <button class="step-head" type="button" data-toggle="stepTax">
+      <span class="step-num">STEP 7</span>
+      <span class="step-title">취득세 계산</span>
+      <span class="step-value" id="taxValue">층수를 먼저 선택해주세요</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="step-body tall">
+      <div class="calc-label">계약 전 보유 주택 수 <small>(분양권·입주권·주거용 오피스텔 포함)</small></div>
+      <div class="option-grid" id="homesList"></div>
+      <div class="notice" style="margin:0 18px 12px">
+        ⚠ 주택 수는 <b>분양계약일 기준</b>으로 판정됩니다. 계약 후 기존 주택을 처분해도 입주 시 취득세율은 바뀌지 않습니다.
+      </div>
+      <div class="calc-box" id="taxBox"></div>
+      <ul class="calc-notes">
+        <li>과세표준 = 분양가 + 확장비 + 유상옵션 (잔금일 이전에 지급하는 확장비·옵션비도 취득가격에 포함됩니다)</li>
+        <li>대전 유성구는 비조정대상지역 기준 — 1·2주택째 1~3%, 3주택째 8%, 4주택째 이상 12%</li>
+        <li>부가세 포함 금액 기준 개략 산정이며 생애최초 감면 등은 반영하지 않았습니다. 실제 세액은 관할 구청 확인</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- STEP 8 : 중도금 이자 -->
+  <section class="step disabled" id="stepLoan">
+    <button class="step-head" type="button" data-toggle="stepLoan">
+      <span class="step-num">STEP 8</span>
+      <span class="step-title">중도금 이자</span>
+      <span class="step-value" id="loanValue">층수를 먼저 선택해주세요</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="step-body tall">
+      <div class="field-row">
+        <label for="rateInput">대출 금리 (연)</label>
+        <span class="rate-wrap"><input type="number" id="rateInput" value="4" min="0" max="20" step="0.1" inputmode="decimal">%</span>
+      </div>
+      <div class="field-row">
+        <label for="moveInInput">입주(잔금) 예정월</label>
+        <input type="month" id="moveInInput">
+      </div>
+      <div class="sched" id="schedList"></div>
+      <div class="calc-box" id="loanBox"></div>
+      <ul class="calc-notes">
+        <li>분양가의 60%(회차별 10% × 6회)를 중도금 대출로 납부한다고 가정, 회차별 대출일부터 입주월까지 단리로 계산</li>
+        <li>회차별 납부월은 예시 일정입니다. 공급계약서 납부일정에 맞게 수정하세요</li>
+        <li>확장비·옵션비는 대출 대상이 아닌 것으로 보고 이자에서 제외했습니다</li>
+      </ul>
+    </div>
+  </section>
 </div>
 
 <div class="summary-bar" id="summaryBar">
@@ -266,6 +345,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
         총 <span id="sumTotalEok">0원</span>
         <span class="raw" id="sumTotalRaw">(0원)</span>
       </div>
+      <div class="summary-extra" id="sumExtra"></div>
     </div>
     <button type="button" class="btn-generate" id="generateBtn">📄 견적서 만들기</button>
   </div>
@@ -624,6 +704,20 @@ const OPTION_CATEGORIES_BY_DANJI = {
   ],
 };
 
+// 취득세 — 계약 전 보유 주택 수 (계약 후 주택 수 = 보유 + 1). 대전 유성구 = 비조정대상지역 기준
+const HOME_COUNTS = [
+  { key: 0, label: "무주택" },
+  { key: 1, label: "1주택" },
+  { key: 2, label: "2주택" },
+  { key: 3, label: "3주택 이상" }
+];
+
+// 중도금 이자 — 입주 예정월(단지별), 회차별 납부월은 예시 일정(공급계약서 일정 받으면 교체)
+const MOVE_IN = { "1단지": "2029-10", "2단지": "2029-12" };
+const MID_SCHEDULE_DEFAULT = ["2027-02", "2027-07", "2027-12", "2028-05", "2028-10", "2029-03"];
+const MID_RATIO = 0.1; // 회차별 분양가의 10% (6회 = 60%)
+const DEFAULT_RATE = 4;
+
 /* ============================================================
    STATE
    ============================================================ */
@@ -634,6 +728,10 @@ const state = {
   expansion: null,
   currentCat: OPTION_CATEGORIES_BY_DANJI['1단지'][0].key,
   selectedOptions: new Map(), // key: cat::id -> {name, price}
+  homes: 0,
+  rate: DEFAULT_RATE,
+  moveIn: MOVE_IN['1단지'],
+  midMonths: MID_SCHEDULE_DEFAULT.slice(),
 };
 
 /* ============================================================
@@ -685,6 +783,8 @@ function selectDanji(danji){
   state.expansion = null;
   state.selectedOptions.clear();
   state.currentCat = OPTION_CATEGORIES_BY_DANJI[danji][0].key;
+  state.moveIn = MOVE_IN[danji];
+  el('moveInInput').value = state.moveIn;
   el('danjiValue').textContent = danji;
   el('typeValue').textContent = '선택해주세요';
   el('floorValue').textContent = '타입을 먼저 선택해주세요';
@@ -966,16 +1066,149 @@ function renderChips(){
 }
 
 /* ============================================================
+   STEP 7 : 취득세 (과세표준 = 분양가 + 확장비 + 유상옵션)
+   ============================================================ */
+function trunc10(n){ return Math.floor(n / 10) * 10; } // 지방세 10원 미만 절사
+
+function priceTotals(){
+  const base = state.band ? state.band.price : 0;
+  const expansion = state.expansion ? state.expansion.price : 0;
+  let opt = 0;
+  state.selectedOptions.forEach(o=> opt += o.price);
+  return { base, expansion, opt, total: base + expansion + opt };
+}
+
+// 비조정대상지역: 1·2주택째 = 6억 이하 1% / 6~9억 (가액×2/3억−3)% / 9억 초과 3%, 3주택째 8%, 4주택째 이상 12%
+function acqRate(price, homes){
+  if(homes >= 3) return 12;
+  if(homes === 2) return 8;
+  if(price <= 600000000) return 1;
+  if(price > 900000000) return 3;
+  return Math.round((price * 2 / 300000000 - 3) * 100) / 100;
+}
+
+function computeTax(){
+  const taxBase = priceTotals().total;
+  const rate = acqRate(taxBase, state.homes);
+  const over85 = parseInt(state.type, 10) > 85; // 전용 85㎡ 초과만 농어촌특별세 과세
+  const heavy = rate >= 8;
+  const acq = trunc10(taxBase * rate / 100);
+  // 지방교육세: 일반세율 주택은 취득세율×50%×20%, 중과는 0.4%
+  const edu = trunc10(taxBase * (heavy ? 0.4 : rate * 0.1) / 100);
+  // 농어촌특별세: 일반 0.2%, 중과 (세율−2%)×10%
+  const farm = over85 ? trunc10(taxBase * (heavy ? (rate - 2) * 0.1 : 0.2) / 100) : 0;
+  const sum = acq + edu + farm;
+  return { taxBase, rate, over85, acq, edu, farm, sum, effRate: taxBase ? sum / taxBase * 100 : 0 };
+}
+
+function homesLabel(){ return HOME_COUNTS.find(h=> h.key === state.homes).label; }
+
+function renderHomesList(){
+  const wrap = el('homesList');
+  wrap.innerHTML = '';
+  HOME_COUNTS.forEach(h=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pick-btn' + (state.homes === h.key ? ' active' : '');
+    btn.textContent = h.label;
+    btn.addEventListener('click', ()=>{
+      state.homes = h.key;
+      renderHomesList();
+      updateSummary();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+function renderTax(){
+  if(!state.band) return;
+  const t = computeTax();
+  const p = priceTotals();
+  el('taxBox').innerHTML = `
+    <div class="calc-row"><span>과세표준</span><b>${fmtWon(t.taxBase)}</b></div>
+    <div class="calc-row sub"><span>분양가 ${fmtEok(p.base)} + 확장비 ${fmtEok(p.expansion)} + 옵션 ${fmtEok(p.opt)}</span></div>
+    <div class="calc-row"><span>취득세 (${t.rate}%)</span><b>${fmtWon(t.acq)}</b></div>
+    <div class="calc-row"><span>지방교육세</span><b>${fmtWon(t.edu)}</b></div>
+    <div class="calc-row"><span>농어촌특별세${t.over85 ? '' : ' (85㎡ 이하 비과세)'}</span><b>${fmtWon(t.farm)}</b></div>
+    <div class="calc-row total"><span>합계 (실효 ${t.effRate.toFixed(2)}%)</span><b>${fmtWon(t.sum)}</b></div>
+  `;
+  el('taxValue').textContent = homesLabel() + ' · ' + fmtEok(t.sum);
+}
+
+/* ============================================================
+   STEP 8 : 중도금 이자 (회차별 대출일 ~ 입주월, 단리)
+   ============================================================ */
+function monthsBetween(from, to){
+  if(!from || !to) return 0;
+  const [fy, fm] = from.split('-').map(Number);
+  const [ty, tm] = to.split('-').map(Number);
+  return Math.max(0, (ty - fy) * 12 + (tm - fm));
+}
+
+function computeLoan(){
+  const base = state.band ? state.band.price : 0;
+  const amount = Math.round(base * MID_RATIO);
+  const rows = state.midMonths.map((month, i)=>{
+    const months = monthsBetween(month, state.moveIn);
+    return { no: i + 1, month, amount, months, interest: Math.round(amount * state.rate / 100 * months / 12) };
+  });
+  const principal = amount * rows.length;
+  const interest = rows.reduce((s, r)=> s + r.interest, 0);
+  return { rows, principal, interest };
+}
+
+function buildSchedule(){
+  const wrap = el('schedList');
+  wrap.innerHTML = '<div class="sched-row head"><span>회차</span><span>대출(납부)월</span><span class="amt">금액</span><span class="int">이자</span></div>';
+  state.midMonths.forEach((month, i)=>{
+    const row = document.createElement('div');
+    row.className = 'sched-row';
+    row.innerHTML = `
+      <span>${i + 1}차</span>
+      <input type="month" value="${month}" aria-label="중도금 ${i + 1}차 납부월">
+      <span class="amt" id="schedAmt${i}">-</span>
+      <span class="int" id="schedInt${i}">-</span>
+    `;
+    row.querySelector('input').addEventListener('input', e=>{
+      state.midMonths[i] = e.target.value;
+      updateSummary();
+    });
+    wrap.appendChild(row);
+  });
+}
+
+function renderLoan(){
+  if(!state.band) return;
+  const l = computeLoan();
+  l.rows.forEach((r, i)=>{
+    el('schedAmt' + i).textContent = fmtEok(r.amount);
+    el('schedInt' + i).textContent = fmtEok(r.interest);
+  });
+  el('loanBox').innerHTML = `
+    <div class="calc-row"><span>중도금 대출 합계 (분양가의 60%)</span><b>${fmtWon(l.principal)}</b></div>
+    <div class="calc-row total"><span>예상 이자 합계 (연 ${state.rate}%)</span><b>${fmtWon(l.interest)}</b></div>
+  `;
+  el('loanValue').textContent = '연 ' + state.rate + '% · ' + fmtEok(l.interest);
+}
+
+/* ============================================================
    합계 계산
    ============================================================ */
 function updateSummary(){
-  const basePrice = state.band ? state.band.price : 0;
-  const expansionPrice = state.expansion ? state.expansion.price : 0;
-  let optTotal = 0;
-  state.selectedOptions.forEach(o=> optTotal += o.price);
-  const total = basePrice + expansionPrice + optTotal;
+  const { base: basePrice, expansion: expansionPrice, opt: optTotal, total } = priceTotals();
 
   el('optValue').textContent = state.selectedOptions.size + '개 선택 · ' + fmtWon(optTotal);
+
+  ['stepTax', 'stepLoan'].forEach(id=>{
+    el(id).classList.toggle('disabled', !state.band);
+    if(!state.band) el(id).classList.remove('open');
+  });
+  if(!state.band){
+    el('taxValue').textContent = '층수를 먼저 선택해주세요';
+    el('loanValue').textContent = '층수를 먼저 선택해주세요';
+  }
+  renderTax();
+  renderLoan();
 
   const bar = el('summaryBar');
   if(basePrice > 0){
@@ -985,6 +1218,7 @@ function updateSummary(){
     el('sumOpt').textContent = fmtWon(optTotal);
     el('sumTotalEok').textContent = fmtEok(total);
     el('sumTotalRaw').textContent = '(' + fmtWon(total) + ')';
+    el('sumExtra').innerHTML = '별도 · 취득세 등 <b>' + fmtEok(computeTax().sum) + '</b> · 중도금 이자 <b>' + fmtEok(computeLoan().interest) + '</b>';
   } else {
     bar.style.display = 'none';
   }
@@ -1031,6 +1265,15 @@ function openEstimate(){
   const expansionLine = state.expansion
     ? state.expansion.name + (state.expansion.price > 0 ? ' (+' + fmtWon(state.expansion.price) + ')' : ' (0원)')
     : '미선택';
+
+  const tax = computeTax();
+  const loan = computeLoan();
+  const grandTotal = total + tax.sum + loan.interest;
+  const taxDesc = '과세표준 ' + fmtWon(tax.taxBase) + ' (분양가+확장비+옵션)\n'
+    + '취득세 ' + fmtWon(tax.acq) + ' · 지방교육세 ' + fmtWon(tax.edu) + ' · 농어촌특별세 ' + fmtWon(tax.farm) + (tax.over85 ? '' : ' (85㎡ 이하 비과세)');
+  const loanDesc = loan.rows.map(r => r.no + '차 ' + r.month + ' ' + fmtEok(r.amount) + ' → ' + r.months + '개월 이자 ' + fmtWon(r.interest)).join('\n');
+  const extraRows = optionRow('취득세', '취득세 등 (' + homesLabel() + ' · 세율 ' + tax.rate + '%)', fmtWon(tax.sum), null, taxDesc)
+    + optionRow('중도금 이자', '연 ' + state.rate + '% · 중도금 60% · 입주 ' + state.moveIn, fmtWon(loan.interest), null, loanDesc);
 
   const now = new Date();
   const dateStr = now.getFullYear() + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + String(now.getDate()).padStart(2,'0')
@@ -1126,11 +1369,19 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',-apple-syste
     <div class="opt-rows">${paidRows}</div>
   </div>
 
+  <div class="section">
+    <h2>부대비용 <small>(예상치)</small></h2>
+    <div class="opt-rows">${extraRows}</div>
+  </div>
+
   <div class="total-box">
     <div class="total-row"><span>분양가</span><strong>${fmtWon(basePrice)}</strong></div>
     <div class="total-row"><span>확장비</span><strong>${fmtWon(expansionPrice)}</strong></div>
     <div class="total-row"><span>옵션가</span><strong>${fmtWon(optTotal)}</strong></div>
     <div class="total-row grand"><span>총 합계</span><strong>${fmtEok(total)} <span class="raw">(${fmtWon(total)})</span></strong></div>
+    <div class="total-row" style="margin-top:8px"><span>+ 취득세 등 (예상)</span><strong>${fmtWon(tax.sum)}</strong></div>
+    <div class="total-row"><span>+ 중도금 이자 (예상)</span><strong>${fmtWon(loan.interest)}</strong></div>
+    <div class="total-row grand"><span>총 소요 예상</span><strong>${fmtEok(grandTotal)} <span class="raw">(${fmtWon(grandTotal)})</span></strong></div>
   </div>
 
   <div class="sheet-footer no-print">
@@ -1138,7 +1389,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',-apple-syste
     <button type="button" class="btn-close" onclick="window.close()">닫기</button>
   </div>
   <div class="sheet-footer-note">
-    문의 1566-6427 · 본 견적서는 상담 참고용이며 실제 계약 내용과 차이가 있을 수 있습니다.
+    문의 1566-6427 · 본 견적서는 상담 참고용이며 실제 계약 내용과 차이가 있을 수 있습니다.<br>
+    취득세·중도금 이자는 개략 예상치이며 실제 세액·이자는 관할 구청 및 대출 금융기관 기준에 따릅니다.
   </div>
 </div>
 </body>
@@ -1165,6 +1417,18 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',-apple-syste
    ============================================================ */
 renderDanjiList();
 el('step1').classList.add('open');
+renderHomesList();
+buildSchedule();
+el('moveInInput').value = state.moveIn;
+el('rateInput').addEventListener('input', e=>{
+  const v = parseFloat(e.target.value);
+  state.rate = isNaN(v) || v < 0 ? 0 : v;
+  updateSummary();
+});
+el('moveInInput').addEventListener('input', e=>{
+  state.moveIn = e.target.value;
+  updateSummary();
+});
 renderOptTabs();
 renderChips();
 updateSummary();
