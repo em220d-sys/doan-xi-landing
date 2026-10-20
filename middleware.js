@@ -8,6 +8,8 @@ export const config = {
 
 const COOLDOWN_SECONDS = 86400; // 최초 접속 후 이 기간(24시간) 동안 방문 횟수를 센다
 const MAX_VISITS = 2; // 기간 내 이 횟수까지는 통과, 그다음(3회째) 접속부터 차단
+// 구글 광고 심사봇·검색봇은 같은 IP+UA로 반복 확인하므로 차단하면 "도착 페이지 환경" 정책 위반으로 광고가 제한됨 → 항상 통과
+const ALLOW_BOTS = /AdsBot-Google|Googlebot|Mediapartners-Google|Google-InspectionTool|Storebot-Google|GoogleOther/i;
 
 export default async function middleware(req) {
   const redisUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -17,6 +19,7 @@ export default async function middleware(req) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || '';
   const ua = req.headers.get('user-agent') || '';
   if (!ip) return;
+  if (ALLOW_BOTS.test(ua)) return;
 
   // 임시 해제 이전(gate:)에 쌓인 방문 기록은 버리고, 차단 재개 시점부터 새로 센다
   const key = `gate2:${ip}:${ua}`;
