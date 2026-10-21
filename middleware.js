@@ -62,7 +62,7 @@ export default async function middleware(req) {
           '<body style="font-family:-apple-system,sans-serif;text-align:center;padding:100px 24px;color:#333">' +
           '<p style="font-size:16px">이미 접속하신 기록이 있어 페이지 접속이 제한됩니다.<br>' +
           '상담이 필요하시면 전화로 문의해주세요.<br>' +
-          '<a href="tel:15666427" style="color:#132242;font-weight:700;font-size:20px;text-decoration:none">1566-6427</a></p>' +
+          '<a href="tel:15553783" style="color:#132242;font-weight:700;font-size:20px;text-decoration:none">1555-3783</a></p>' +
           '</body></html>',
         { status: 429, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
       );
